@@ -1,0 +1,103 @@
+<function-block> is
+function <name> ( <parameter-list> ) : \n <statement-list>
+
+<name> is
+[_a-zA-Z][_a-zA-Z0-9]*
+
+<parameter-list> is
+<name>
+<name> , <parameter-list>
+
+<statement-list> is
+<statement>
+<statement> \n <statement-list>
+
+<statement> is
+<assignment>
+<call>
+<while-block>
+<for-block>
+<if-block>
+
+<assignment> is
+<variable> <assign-op> <expression0>
+
+<variable> is
+<name>
+<name> [ <expression0> ]
+
+<assign-op> is
+:=
++=
+*=
+-=
+/=
+%=
+|=
+&=
+^=
+
+<expression0> is
+<expression1>
+<expression1> | <expression0>
+
+<expression1> is
+<expression2>
+<expression2> ^ <expression1>
+
+<expression2> is
+<expression3>
+<expression3> & <expression2>
+
+<expression3> is
+<expression4>
+<expression4> == <expression3>
+<expression4> != <expression3>
+
+<expression4> is
+<expression5>
+<expression5> > <expression4>
+<expression5> >= <expression4>
+<expression5> < <expression4>
+<expression5> <= <expression4>
+
+<expression5> is
+<expression6>
+<expression6> + <expression5>
+<expression6> - <expression5>
+
+<expression6> is
+<expression7>
+<expression7> * <expression6>
+<expression7> / <expression6>
+<expression7> % <expression6>
+
+<expression7> is
+<expression8>
++ <expression8>
+- <expression8>
+
+<expression8> is
+<variable>
+<constant>
+<call>
+( <expression0> )
+
+<constant> is
+[0-9]+
+
+<call> is
+<name> ( <argument-list> )
+
+<argument-list> is
+<expression0>
+<expression0> , <argument-list>
+
+<while-block> is
+while <expression0> : \n <statement-list>
+
+<for-block> is
+for <name> := <expression0> until <expression0> : \n <statement-list>
+
+<if-block> is
+if <expression0> : \n <statement-list>

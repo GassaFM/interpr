@@ -12,3 +12,5 @@ function sum (id, pr, n, a):
 		for k := 0 until pr:
 			r += receive (k)
 		print (r)
+
+	b := array (hi - lo)

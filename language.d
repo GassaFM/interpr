@@ -28,13 +28,21 @@ final class CallStatement : Statement
 	CallExpression call;
 }
 
-final class WhileStatement : Statement
+final class WhileBlock : Statement
 {
 	Expression cond;
 	Statement [] statementList;
 }
 
-final class IfStatement : Statement
+final class ForBlock : Statement
+{
+	string name;
+	Expression start;
+	Expression finish;
+	Statement [] statementList;
+}
+
+final class IfBlock : Statement
 {
 	Expression cond;
 	Statement [] statementListTrue;
@@ -59,6 +67,13 @@ final class BinaryOpExpression : Expression
 	Type type;
 	Expression left;
 	Expression right;
+
+	this (Type type_, Expression left_, Expression right_)
+	{
+		type = type_;
+		left = left_;
+		right = right_;
+	}
 }
 
 final class UnaryOpExpression : Expression
@@ -66,6 +81,12 @@ final class UnaryOpExpression : Expression
 	enum Type : byte {plus, minus, not, complement};
 	Type type;
 	Expression expr;
+
+	this (Type type_, Expression expr_)
+	{
+		type = type_;
+		expr = expr_;
+	}
 }
 
 final class VarExpression : Expression

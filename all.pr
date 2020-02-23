@@ -1,0 +1,64 @@
+function sum (id, pr, n, a):
+	x := array (n)
+	x += id
+	x -= id
+	x *= id
+	x /= id
+	x %= id
+	x ^= id
+	x &= id
+	x |= id
+	x := (((id > pr) & (id < pr) | (id == pr) ^ (id >= pr)))
+	x := ((id <= pr)) & ((id != pr)))
+	x := id + id - id * id / id % pr ^ pr & pr | pr
+	y := +++id + ++id + +id + id
+	z := ---id - --id - -id - id
+	y := !!!id | !!id ^ !id & id
+	z := ~~~id & ~~id ^ ~id | id
+	for line := -0 until ++11111:
+		_ := array (1)
+		if line == 0:
+			while x <= 0:
+				x += 1
+		if line == 0:
+			x := x
+		else:
+		y := y
+	send (id, id)
+	b := array (2)
+	b[1] := receive (id)
+	print (b[0])
+	_0123456789abcdefghijklmnopqrstuvwxyz := 0
+	_ABCDEFGHIJKLMNOPQRSTUVWXYZ := 12345678901234568
+
+	x:=array(n)
+	x+=id
+	x-=id
+	x*=id
+	x/=id
+	x%=id
+	x^=id
+	x&=id
+	x|=id
+	x:=(((id>pr)&(id<pr)|(id==pr)^(id>=pr)))
+	x:=((id<=pr))&((id!=pr)))
+	x:=id+id-id*id/id%pr^pr&pr|pr
+	y:=+++id+++id++id+id
+	z:=---id---id--id-id
+	y:=!!!id|!!id^!id&id
+	z:=~~~id&~~id^~id|id
+	for line:=-0until++11111:
+		_:=array(1)
+		if line==0:
+			while x<=0:
+				x+=1
+		if line==0:
+			x:=x
+		else:
+		y:=y
+	send(id,id)
+	b:=array(2)
+	b[1]:=receive(id)
+	print(b[0])
+	_0123456789abcdefghijklmnopqrstuvwxyz:=0
+	_ABCDEFGHIJKLMNOPQRSTUVWXYZ:=12345678901234568

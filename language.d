@@ -1,22 +1,26 @@
 // Author: Ivan Kazmenko (gassa@mail.ru)
 module language;
-
-final class FunctionBlock
-{
-	string name;
-	string [] parameterList;
-	Statement [] statementList;
-	int lineId;
-
-	this (int lineId_)
-	{
-		lineId = lineId_;
-	}
-}
+import std.algorithm;
 
 class Statement
 {
 	int lineId;
+	int complexity;
+}
+
+final class FunctionBlock : Statement
+{
+	string name;
+	string [] parameterList;
+	Statement [] statementList;
+
+	this (int lineId_, string name_, string [] parameterList_)
+	{
+		lineId = lineId_;
+		name = name_;
+		parameterList = parameterList_;
+		complexity = 1;
+	}
 }
 
 final class AssignStatement : Statement
@@ -33,6 +37,7 @@ final class AssignStatement : Statement
 		type = type_;
 		dest = dest_;
 		expr = expr_;
+		complexity = 1 + dest.complexity + expr.complexity;
 	}
 }
 
@@ -44,6 +49,7 @@ final class CallStatement : Statement
 	{
 		lineId = lineId_;
 		call = call_;
+		complexity = call.complexity;
 	}
 }
 
@@ -52,9 +58,11 @@ final class WhileBlock : Statement
 	Expression cond;
 	Statement [] statementList;
 
-	this (int lineId_)
+	this (int lineId_, Expression cond_)
 	{
 		lineId = lineId_;
+		cond = cond_;
+		complexity = cond.complexity;
 	}
 }
 
@@ -65,9 +73,13 @@ final class ForBlock : Statement
 	Expression finish;
 	Statement [] statementList;
 
-	this (int lineId_)
+	this (int lineId_, string name_, Expression start_, Expression finish_)
 	{
 		lineId = lineId_;
+		name = name_;
+		start = start_;
+		finish = finish_;
+		complexity = 1 + start.complexity + finish.complexity;
 	}
 }
 
@@ -77,14 +89,17 @@ final class IfBlock : Statement
 	Statement [] statementListTrue;
 	Statement [] statementListFalse;
 
-	this (int lineId_)
+	this (int lineId_, Expression cond_)
 	{
 		lineId = lineId_;
+		cond = cond_;
+		complexity = cond.complexity;
 	}
 }
 
 class Expression
 {
+	int complexity;
 }
 
 final class CallExpression : Expression
@@ -96,6 +111,7 @@ final class CallExpression : Expression
 	{
 		name = name_;
 		argumentList = argumentList_.dup;
+		complexity = 1 + argumentList.map !(e => e.complexity).sum;
 	}
 }
 
@@ -113,6 +129,7 @@ final class BinaryOpExpression : Expression
 		type = type_;
 		left = left_;
 		right = right_;
+		complexity = 1 + left.complexity + right.complexity;
 	}
 }
 
@@ -126,6 +143,7 @@ final class UnaryOpExpression : Expression
 	{
 		type = type_;
 		expr = expr_;
+		complexity = 1 + expr.complexity;
 	}
 }
 
@@ -138,6 +156,11 @@ final class VarExpression : Expression
 	{
 		name = name_;
 		index = index_;
+		complexity = 1;
+		if (index !is null)
+		{
+			complexity += index.complexity;
+		}
 	}
 }
 
@@ -148,5 +171,6 @@ final class ConstExpression : Expression
 	this (long value_)
 	{
 		value = value_;
+		complexity = 1;
 	}
 }

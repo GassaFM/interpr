@@ -358,14 +358,13 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		WhileBlock res = new WhileBlock (line.lineId);
-
 		line.tokens.consume ("while", line);
-		res.cond = parseExpression (line);
+		auto cond = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
+		WhileBlock res = new WhileBlock (line.lineId, cond);
 		res.statementList = parseBlock (prevIndent);
 		return res;
 	}
@@ -377,19 +376,18 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		ForBlock res = new ForBlock (line.lineId);
-
 		line.tokens.consume ("for", line);
-		res.name = line.tokens.consume !(isIdent)
+		auto name = line.tokens.consume !(isIdent)
 		    (line, "bad name: " ~ line.tokens.front);
 		line.tokens.consume (":=", line);
-		res.start = parseExpression (line);
+		auto start = parseExpression (line);
 		line.tokens.consume ("until", line);
-		res.finish = parseExpression (line);
+		auto finish = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
+		ForBlock res = new ForBlock (line.lineId, name, start, finish);
 		res.statementList = parseBlock (prevIndent);
 		return res;
 	}
@@ -401,14 +399,13 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		IfBlock res = new IfBlock (line.lineId);
-
 		line.tokens.consume ("if", line);
-		res.cond = parseExpression (line);
+		auto cond = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
+		IfBlock res = new IfBlock (line.lineId, cond);
 		res.statementListTrue = parseBlock (prevIndent);
 
 		line = t.front;
@@ -525,18 +522,16 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		auto res = new FunctionBlock (line.lineId);
-
 		line.tokens.consume ("function", line);
-		res.name = line.tokens.consume !(isIdent)
+		auto name = line.tokens.consume !(isIdent)
 		    (line, "bad name: " ~ line.tokens.front);
+		string [] params;
 		line.tokens.consume ("(", line);
 		if (line.tokens.front != ")")
 		{
 			while (true)
 			{
-				res.parameterList ~=
-				    line.tokens.consume !(isIdent)
+				params ~= line.tokens.consume !(isIdent)
 				    (line, "bad name: " ~ line.tokens.front);
 				if (line.tokens.front == ")")
 				{
@@ -549,6 +544,7 @@ final class StatementParser
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
+		auto res = new FunctionBlock (line.lineId, name, params);
 
 		res.statementList = parseBlock (prevIndent);
 

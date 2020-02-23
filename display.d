@@ -72,7 +72,8 @@ void display (Expression e)
 
 void display (Statement s, int indent)
 {
-	writef ("%4d:   %-(%s%)", s.lineId, "\t".repeat (indent));
+	writef ("%4d:%-3d %-(%s%)", s.lineId, s.complexity,
+	    "\t".repeat (indent));
 
 	{
 		auto cur = cast (AssignStatement) (s);

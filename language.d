@@ -21,11 +21,23 @@ final class AssignStatement : Statement
 	Type type;
 	VarExpression dest;
 	Expression expr;
+
+	this (Type type_, VarExpression dest_, Expression expr_)
+	{
+		type = type_;
+		dest = dest_;
+		expr = expr_;
+	}
 }
 
 final class CallStatement : Statement
 {
 	CallExpression call;
+
+	this (CallExpression call_)
+	{
+		call = call_;
+	}
 }
 
 final class WhileBlock : Statement
@@ -57,6 +69,12 @@ final class CallExpression : Expression
 {
 	string name;
 	Expression [] argumentList;
+
+	this (string name_, Expression [] argumentList_)
+	{
+		name = name_;
+		argumentList = argumentList_.dup;
+	}
 }
 
 final class BinaryOpExpression : Expression
@@ -93,9 +111,20 @@ final class VarExpression : Expression
 {
 	string name;
 	Expression index;
+
+	this (string name_, Expression index_)
+	{
+		name = name_;
+		index = index_;
+	}
 }
 
 final class ConstExpression : Expression
 {
 	long value;
+
+	this (long value_)
+	{
+		value = value_;
+	}
 }

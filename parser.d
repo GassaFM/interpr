@@ -41,7 +41,16 @@ struct Line
 			while (!t.empty)
 			{
 				string temp;
-				if (t.front.isIdent)
+				if (t.front.isDigit)
+				{
+					do
+					{
+						temp ~= t.front;
+						t.popFront ();
+					}
+					while (!t.empty && t.front.isDigit);
+				}
+				else if (t.front.isIdent)
 				{
 					do
 					{
@@ -112,8 +121,16 @@ string consume (alias pred) (ref string [] tokens,
 string consume (ref string [] tokens, string toSkip,
     const ref Line line)
 {
-	check (!tokens.empty && tokens.front == toSkip, line,
-	    "expected: " ~ toSkip ~ ", found: " ~ tokens.front);
+	if (tokens.empty)
+	{
+		check (!tokens.empty && tokens.front == toSkip, line,
+		    "expected: " ~ toSkip ~ ", found end of line");
+	}
+	else
+	{
+		check (!tokens.empty && tokens.front == toSkip, line,
+		    "expected: " ~ toSkip ~ ", found: " ~ tokens.front);
+	}
 	auto res = tokens.front;
 	tokens.popFront ();
 	return res;
@@ -121,9 +138,78 @@ string consume (ref string [] tokens, string toSkip,
 
 Expression parseExpression (ref Line line)
 {
+	Expression parseCallExpression () ()
+	{
+		auto name = line.tokens.consume !(isIdent)
+		    (line, "bad name: " ~ line.tokens.front);
+		line.tokens.consume ("(", line);
+
+		Expression [] params;
+		if (line.tokens.front != ")")
+		{
+			while (true)
+			{
+				params ~= parse0 ();
+				check (!line.tokens.empty, line,
+				    "expected , or ), found end of line");
+				if (line.tokens.front == ")")
+				{
+					break;
+				}
+				line.tokens.consume (",", line);
+			}
+		}
+		line.tokens.consume (")", line);
+
+		return new CallExpression (name, params);
+	}
+
+	Expression parseVarExpression () ()
+	{
+		auto name = line.tokens.consume !(isIdent)
+		    (line, "bad name: " ~ line.tokens.front);
+		Expression index = null;
+		if (!line.tokens.empty && line.tokens.front == "[")
+		{
+			line.tokens.consume ("[", line);
+			index = parse0 ();
+			line.tokens.consume ("]", line);
+		}
+		return new VarExpression (name, index);
+	}
+
 	Expression parse8 () ()
 	{
-		return new Expression ();
+		check (!line.tokens.empty, line, "end of line in expression");
+		if (line.tokens.front == "(")
+		{
+			line.tokens.popFront ();
+			auto res = parse0 ();
+			line.tokens.consume (")", line);
+			return res;
+		}
+		if (line.tokens.front.front.isDigit)
+		{
+			writeln (line.tokens.front);
+			auto res = new ConstExpression
+			    (line.tokens.front.to !(long));
+			line.tokens.popFront ();
+			return res;
+		}
+		if (line.tokens.front.isIdent)
+		{
+			if (line.tokens.length > 1 && line.tokens[1] == "(")
+			{
+				return parseCallExpression ();
+			}
+			else
+			{
+				return parseVarExpression ();
+			}
+		}
+		check (false, line,
+		    "can not parse token: " ~ line.tokens.front);
+		assert (false);
 	}
 
 	Expression parse7 () ()
@@ -155,13 +241,13 @@ Expression parseExpression (ref Line line)
 		while (!line.tokens.empty && (line.tokens.front == "*" ||
 		    line.tokens.front == "/" || line.tokens.front == "%"))
 		{
-			line.tokens.popFront ();
-			auto next = parse7 ();
 			auto type = (line.tokens.front == "*") ?
 			    BinaryOpExpression.Type.multiply :
 			    (line.tokens.front == "/") ?
 			    BinaryOpExpression.Type.divide :
 			    BinaryOpExpression.Type.modulo;
+			line.tokens.popFront ();
+			auto next = parse7 ();
 			res = new BinaryOpExpression (type, res, next);
 		}
 		return res;
@@ -173,11 +259,11 @@ Expression parseExpression (ref Line line)
 		while (!line.tokens.empty &&
 		    (line.tokens.front == "+" || line.tokens.front == "-"))
 		{
-			line.tokens.popFront ();
-			auto next = parse6 ();
 			auto type = (line.tokens.front == "+") ?
 			    BinaryOpExpression.Type.add :
 			    BinaryOpExpression.Type.subtract;
+			line.tokens.popFront ();
+			auto next = parse6 ();
 			res = new BinaryOpExpression (type, res, next);
 		}
 		return res;
@@ -190,8 +276,6 @@ Expression parseExpression (ref Line line)
 		    (line.tokens.front == "<" || line.tokens.front == "<=" ||
 		    line.tokens.front == ">" || line.tokens.front == ">="))
 		{
-			line.tokens.popFront ();
-			auto next = parse5 ();
 			auto type = (line.tokens.front == "<") ?
 			    BinaryOpExpression.Type.less :
 			    (line.tokens.front == "<=") ?
@@ -199,6 +283,8 @@ Expression parseExpression (ref Line line)
 			    (line.tokens.front == ">") ?
 			    BinaryOpExpression.Type.greater :
 			    BinaryOpExpression.Type.greaterEqual;
+			line.tokens.popFront ();
+			auto next = parse5 ();
 			res = new BinaryOpExpression (type, res, next);
 		}
 		return res;
@@ -210,11 +296,11 @@ Expression parseExpression (ref Line line)
 		while (!line.tokens.empty &&
 		    (line.tokens.front == "==" || line.tokens.front == "!="))
 		{
-			line.tokens.popFront ();
-			auto next = parse4 ();
 			auto type = (line.tokens.front == "==") ?
 			    BinaryOpExpression.Type.equal :
 			    BinaryOpExpression.Type.notEqual;
+			line.tokens.popFront ();
+			auto next = parse4 ();
 			res = new BinaryOpExpression (type, res, next);
 		}
 		return res;
@@ -344,30 +430,48 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		CallStatement res = new CallStatement ();
-
-		res.name = line.tokens.consume !(isIdent)
-		    (line, "bad name: " ~ line.tokens.front);
-		line.tokens.consume ("(", line);
-		if (line.tokens.front != ")")
-		{
-			while (true)
-			{
-				res.parameterList ~= parseExpression (line);
-				check (!line.tokens.empty, line,
-				    "expected , or ), found end of line");
-				if (line.tokens.front == ")")
-				{
-					break;
-				}
-				line.tokens.consume (",", line);
-			}
-		}
-		line.tokens.consume (")", line);
+		auto cur = cast (CallExpression) (parseExpression (line));
+		check (cur !is null, line,
+		    "call statement detected but not parsed");
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
-		return res;
+		return new CallStatement (cur);
+	}
+
+	Statement parseAssignStatement (string prevIndent)
+	{
+		auto line = t.front;
+		check (line.indent == prevIndent, line,
+		    "indent does not match");
+		t.popFront ();
+
+		auto var = cast (VarExpression) (parseExpression (line));
+		check (var !is null, line,
+		    "assign statement detected but left side not parsed");
+
+		check (!line.tokens.empty, line,
+		    "expected assignment operator, found end of line");
+		auto op = line.tokens.consume !(op => op.length == 2 &&
+		    ":+-*/%|^&".canFind (op[0]) && op[1] == '=')
+		    (line, "expected assignment operator, found " ~
+		    line.tokens.front);
+		auto type =
+		    (op == "+=") ? AssignStatement.Type.assignAdd :
+		    (op == "-=") ? AssignStatement.Type.assignSubtract :
+		    (op == "*=") ? AssignStatement.Type.assignMultiply :
+		    (op == "/=") ? AssignStatement.Type.assignDivide :
+		    (op == "%=") ? AssignStatement.Type.assignModulo :
+		    (op == "|=") ? AssignStatement.Type.assignOr :
+		    (op == "^=") ? AssignStatement.Type.assignXor :
+		    (op == "&=") ? AssignStatement.Type.assignAnd :
+		    AssignStatement.Type.assign;
+
+		auto cur = parseExpression (line);
+		check (line.tokens.empty, line,
+		    "extra token at end of line: " ~ line.tokens.front);
+
+		return new AssignStatement (type, var, cur);
 	}
 
 	Statement parseStatement (string prevIndent)

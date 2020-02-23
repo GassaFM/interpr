@@ -9,7 +9,7 @@ function sum (id, pr, n, a):
 	x &= id
 	x |= id
 	x := (((id > pr) & (id < pr) | (id == pr) ^ (id >= pr)))
-	x := ((id <= pr)) & ((id != pr)))
+	x := (((id <= pr)) & ((id != pr)))
 	x := id + id - id * id / id % pr ^ pr & pr | pr
 	y := +++id + ++id + +id + id
 	z := ---id - --id - -id - id
@@ -23,7 +23,7 @@ function sum (id, pr, n, a):
 		if line == 0:
 			x := x
 		else:
-		y := y
+			y := y
 	send (id, id)
 	b := array (2)
 	b[1] := receive (id)
@@ -41,7 +41,7 @@ function sum (id, pr, n, a):
 	x&=id
 	x|=id
 	x:=(((id>pr)&(id<pr)|(id==pr)^(id>=pr)))
-	x:=((id<=pr))&((id!=pr)))
+	x:=(((id<=pr))&((id!=pr)))
 	x:=id+id-id*id/id%pr^pr&pr|pr
 	y:=+++id+++id++id+id
 	z:=---id---id--id-id
@@ -55,7 +55,7 @@ function sum (id, pr, n, a):
 		if line==0:
 			x:=x
 		else:
-		y:=y
+			y:=y
 	send(id,id)
 	b:=array(2)
 	b[1]:=receive(id)

@@ -190,7 +190,6 @@ Expression parseExpression (ref Line line)
 		}
 		if (line.tokens.front.front.isDigit)
 		{
-			writeln (line.tokens.front);
 			auto res = new ConstExpression
 			    (line.tokens.front.to !(long));
 			line.tokens.popFront ();
@@ -359,7 +358,7 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		WhileBlock res = new WhileBlock ();
+		WhileBlock res = new WhileBlock (line.lineId);
 
 		line.tokens.consume ("while", line);
 		res.cond = parseExpression (line);
@@ -378,7 +377,7 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		ForBlock res = new ForBlock ();
+		ForBlock res = new ForBlock (line.lineId);
 
 		line.tokens.consume ("for", line);
 		res.name = line.tokens.consume !(isIdent)
@@ -402,7 +401,7 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		IfBlock res = new IfBlock ();
+		IfBlock res = new IfBlock (line.lineId);
 
 		line.tokens.consume ("if", line);
 		res.cond = parseExpression (line);
@@ -436,7 +435,7 @@ final class StatementParser
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
-		return new CallStatement (cur);
+		return new CallStatement (line.lineId, cur);
 	}
 
 	Statement parseAssignStatement (string prevIndent)
@@ -471,7 +470,7 @@ final class StatementParser
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
-		return new AssignStatement (type, var, cur);
+		return new AssignStatement (line.lineId, type, var, cur);
 	}
 
 	Statement parseStatement (string prevIndent)
@@ -526,7 +525,7 @@ final class StatementParser
 		    "indent does not match");
 		t.popFront ();
 
-		auto res = new FunctionBlock ();
+		auto res = new FunctionBlock (line.lineId);
 
 		line.tokens.consume ("function", line);
 		res.name = line.tokens.consume !(isIdent)

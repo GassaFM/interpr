@@ -7,6 +7,11 @@ final class FunctionBlock
 	string [] parameterList;
 	Statement [] statementList;
 	int lineId;
+
+	this (int lineId_)
+	{
+		lineId = lineId_;
+	}
 }
 
 class Statement
@@ -22,8 +27,9 @@ final class AssignStatement : Statement
 	VarExpression dest;
 	Expression expr;
 
-	this (Type type_, VarExpression dest_, Expression expr_)
+	this (int lineId_, Type type_, VarExpression dest_, Expression expr_)
 	{
+		lineId = lineId_;
 		type = type_;
 		dest = dest_;
 		expr = expr_;
@@ -34,8 +40,9 @@ final class CallStatement : Statement
 {
 	CallExpression call;
 
-	this (CallExpression call_)
+	this (int lineId_, CallExpression call_)
 	{
+		lineId = lineId_;
 		call = call_;
 	}
 }
@@ -44,6 +51,11 @@ final class WhileBlock : Statement
 {
 	Expression cond;
 	Statement [] statementList;
+
+	this (int lineId_)
+	{
+		lineId = lineId_;
+	}
 }
 
 final class ForBlock : Statement
@@ -52,6 +64,11 @@ final class ForBlock : Statement
 	Expression start;
 	Expression finish;
 	Statement [] statementList;
+
+	this (int lineId_)
+	{
+		lineId = lineId_;
+	}
 }
 
 final class IfBlock : Statement
@@ -59,6 +76,11 @@ final class IfBlock : Statement
 	Expression cond;
 	Statement [] statementListTrue;
 	Statement [] statementListFalse;
+
+	this (int lineId_)
+	{
+		lineId = lineId_;
+	}
 }
 
 class Expression

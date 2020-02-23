@@ -1,5 +1,5 @@
 // Author: Ivan Kazmenko (gassa@mail.ru)
-module test;
+module display;
 import std.algorithm;
 import std.range;
 import std.stdio;

@@ -14,7 +14,7 @@ class Statement
 	int lineId;
 }
 
-class AssignStatement : Statement
+final class AssignStatement : Statement
 {
 	enum Type : byte {assign, assignAdd, assignSubtract, assignMultiply,
 	    assignDivide, assignModulo, assignXor, assignAnd, assignOr};
@@ -23,18 +23,18 @@ class AssignStatement : Statement
 	Expression expr;
 }
 
-class CallStatement : Statement
+final class CallStatement : Statement
 {
 	CallExpression call;
 }
 
-class WhileStatement : Statement
+final class WhileStatement : Statement
 {
 	Expression cond;
 	Statement [] statementList;
 }
 
-class IfStatement : Statement
+final class IfStatement : Statement
 {
 	Expression cond;
 	Statement [] statementListTrue;
@@ -45,13 +45,13 @@ class Expression
 {
 }
 
-class CallExpression : Expression
+final class CallExpression : Expression
 {
 	string name;
 	Expression [] argumentList;
 }
 
-class BinaryOpExpression : Expression
+final class BinaryOpExpression : Expression
 {
 	enum Type : byte {add, subtract, multiply, divide, modulo,
 	    xor, and, or, greater, greaterEqual, less, lessEqual,
@@ -61,20 +61,20 @@ class BinaryOpExpression : Expression
 	Expression right;
 }
 
-class UnaryOpExpression : Expression
+final class UnaryOpExpression : Expression
 {
 	enum Type : byte {plus, minus, not, complement};
 	Type type;
 	Expression expr;
 }
 
-class VarExpression : Expression
+final class VarExpression : Expression
 {
 	string name;
 	Expression index;
 }
 
-class ConstExpression : Expression
+final class ConstExpression : Expression
 {
 	long value;
 }

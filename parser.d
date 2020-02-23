@@ -8,6 +8,7 @@ import std.format;
 import std.range;
 import std.stdio;
 import std.string;
+import std.traits;
 import language;
 
 immutable int NA = -1;
@@ -78,8 +79,39 @@ struct Line
 }
 
 bool isIdent (C) (C c)
+    if (isSomeChar !(C))
 {
 	return c.isAlpha || c.isDigit || c == '_';
+}
+
+bool isIdentStart (C) (C c)
+    if (isSomeChar !(C))
+{
+	return c.isAlpha || c == '_';
+}
+
+bool isIdent (string s)
+{
+	return !s.empty && s.front.isIdentStart && s.all !(isIdent);
+}
+
+string consume (alias pred) (ref string [] tokens,
+    const ref Line line, lazy string comment)
+{
+	check (!tokens.empty && pred (tokens.front), line, comment);
+	auto res = tokens.front;
+	tokens.popFront ();
+	return res;
+}
+
+string consume (ref string [] tokens, string toSkip,
+    const ref Line line)
+{
+	check (!tokens.empty && tokens.front == toSkip, line,
+	    "expected: " ~ toSkip ~ ", found: " ~ tokens.front);
+	auto res = tokens.front;
+	tokens.popFront ();
+	return res;
 }
 
 FunctionBlock parse (T) (T t0)
@@ -96,6 +128,28 @@ FunctionBlock parse (T) (T t0)
 		t.popFront ();
 
 		auto res = new FunctionBlock ();
+		line.tokens.consume ("function", line);
+		res.name = line.tokens.consume !(isIdent)
+		    (line, "bad name: " ~ line.tokens.front);
+		line.tokens.consume ("(", line);
+		if (line.tokens.front != ")")
+		{
+			while (true)
+			{
+				res.parameterList ~=
+				    line.tokens.consume !(isIdent)
+				    (line, "bad name: " ~ line.tokens.front);
+				if (line.tokens.front == ")")
+				{
+					break;
+				}
+				line.tokens.consume (",", line);
+			}
+		}
+		line.tokens.consume (")", line);
+		line.tokens.consume (":", line);
+		check (line.tokens.empty, line,
+		    "extra token at end of line: " ~ line.tokens.front);
 		return res;
 	}
 
@@ -103,7 +157,7 @@ FunctionBlock parse (T) (T t0)
 	return res;
 }
 
-void check (bool cond, const ref Line line, string comment)
+void check (bool cond, const ref Line line, lazy string comment)
 {
 	if (!cond)
 	{

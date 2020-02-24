@@ -6,6 +6,7 @@ import std.exception;
 import std.range;
 import std.stdio;
 import std.string;
+import display;
 import language;
 import parser;
 import runner;
@@ -14,6 +15,7 @@ void main (string [] args)
 {
 	// set default parameters
 	bool compileOnly = false;
+	bool doDisplay = false;
 	int num = 100;
 	int steps = 1_000_000;
 	string fileName = "";
@@ -25,6 +27,10 @@ void main (string [] args)
 		if (args[pos] == "-c")
 		{
 			compileOnly = true;
+		}
+		else if (args[pos] == "-d")
+		{
+			doDisplay = true;
 		}
 		else if (args[pos] == "-n")
 		{
@@ -47,6 +53,10 @@ void main (string [] args)
 	auto f = File (fileName, "rt");
 	auto s = new StatementParser ();
 	auto p = s.parse (f.byLineCopy.array);
+	if (doDisplay)
+	{
+		displayFunction (p);
+	}
 	if (compileOnly)
 	{
 		return;

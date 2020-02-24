@@ -32,7 +32,8 @@ void display (Expression e)
 			write ("(");
 			display (cur.left);
 			writef (" %s ", ["+", "-", "*", "/", "%", "^", "&",
-			    "|", ">", ">=", "<", "<=", "==", "!="][cur.type]);
+			    "|", ">", ">=", "<", "<=", "==", "!=",
+			    ">>", ">>>", "<<"][cur.type]);
 			display (cur.right);
 			write (")");
 		}
@@ -80,7 +81,8 @@ void display (Statement s, int indent)
 		if (cur !is null)
 		{
 			display (cur.dest);
-			write (" ", ":+-*/%^&|"[cur.type], "=", " ");
+			write (" ", [":", "+", "-", "*", "/", "%", "^", "&",
+			    "|", ">>", ">>>", "<<"][cur.type], "=", " ");
 			display (cur.expr);
 			writeln;
 		}
@@ -150,7 +152,7 @@ void display (Statement s, int indent)
 	}
 }
 
-void display (FunctionBlock p)
+void displayFunction (FunctionBlock p)
 {
 	writefln ("%4d:    function %s (%-(%s, %)):",
 	    p.lineId, p.name, p.parameterList);
@@ -158,12 +160,4 @@ void display (FunctionBlock p)
 	{
 		display (s, 1);
 	}
-}
-
-void main (string [] args)
-{
-	auto f = File (args[1], "rt");
-	auto r = new StatementParser ();
-	auto p = r.parse (f.byLineCopy.array);
-	display (p);
 }

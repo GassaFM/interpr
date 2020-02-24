@@ -65,6 +65,7 @@ class Runner
 		int argNum = 0;
 		static foreach (cur; args)
 		{
+			writeln (cur);
 			if (argNum >= p.parameterList.length)
 			{
 				throw new Exception ("not enough parameters");
@@ -424,7 +425,7 @@ class Runner
 
 		with (state.back)
 		{
-//			writeln (delay, " ", state.back.vars, state.back.pos);
+			writeln (delay, " ", state.back.vars, state.back.pos);
 			auto cur0 = cast (FunctionBlock) (parent);
 			if (cur0 !is null) with (cur0)
 			{
@@ -514,12 +515,13 @@ class RunnerControl
 		return runners.length.to !(int);
 	}
 
-	this (Args...) (int num_, Args args)
+	this (Args...) (int num_, FunctionBlock p, Args args)
 	{
 		runners = new Runner [num_];
 		foreach (i, ref r; runners)
 		{
-			r = new Runner (this, i.to !(int), args);
+			r = new Runner (this, i.to !(int), p,
+			    i.to !(int), num_, args);
 		}
 		queues = new long [] [] [] (num_, num_);
 	}

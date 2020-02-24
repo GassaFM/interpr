@@ -26,7 +26,8 @@ final class FunctionBlock : Statement
 final class AssignStatement : Statement
 {
 	enum Type : byte {assign, assignAdd, assignSubtract, assignMultiply,
-	    assignDivide, assignModulo, assignXor, assignAnd, assignOr};
+	    assignDivide, assignModulo, assignXor, assignAnd, assignOr,
+	    assignSar, assignShr, assignShl};
 	Type type;
 	VarExpression dest;
 	Expression expr;
@@ -119,7 +120,7 @@ final class BinaryOpExpression : Expression
 {
 	enum Type : byte {add, subtract, multiply, divide, modulo,
 	    xor, and, or, greater, greaterEqual, less, lessEqual,
-	    equal, notEqual};
+	    equal, notEqual, sar, shr, shl};
 	Type type;
 	Expression left;
 	Expression right;

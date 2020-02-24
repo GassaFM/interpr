@@ -231,6 +231,10 @@ class Runner
 			case Type.lessEqual:    return leftValue <= rightValue;
 			case Type.equal:        return leftValue == rightValue;
 			case Type.notEqual:     return leftValue != rightValue;
+			case Type.sar:          return leftValue >> rightValue;
+			case Type.shr:          return (cast (ulong)
+			    (leftValue)) >> rightValue;
+			case Type.shl:          return leftValue << rightValue;
 			}
 		}
 
@@ -304,6 +308,10 @@ class Runner
 		case Type.assignXor:      *(addr) ^= value; break;
 		case Type.assignAnd:      *(addr) &= value; break;
 		case Type.assignOr:       *(addr) |= value; break;
+		case Type.assignSar:      *(addr) >>= value; break;
+		case Type.assignShr:      *(cast (ulong *) (addr)) >>= value;
+		    break;
+		case Type.assignShl:      *(addr) |= value; break;
 		}
 	}
 

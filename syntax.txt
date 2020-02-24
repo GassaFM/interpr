@@ -36,6 +36,9 @@ function <name> ( <parameter-list> ) : \n <statement-list>
 |=
 &=
 ^=
+>>=
+>>>=
+<<=
 
 <expression0> is
 <expression1>
@@ -63,23 +66,29 @@ function <name> ( <parameter-list> ) : \n <statement-list>
 
 <expression5> is
 <expression6>
-<expression6> + <expression5>
-<expression6> - <expression5>
+<expression6> >> <expression5>
+<expression6> >>> <expression5>
+<expression6> << <expression5>
 
 <expression6> is
 <expression7>
-<expression7> * <expression6>
-<expression7> / <expression6>
-<expression7> % <expression6>
+<expression7> + <expression6>
+<expression7> - <expression6>
 
 <expression7> is
 <expression8>
-+ <expression8>
-- <expression8>
-! <expression8>
-~ <expression8>
+<expression8> * <expression7>
+<expression8> / <expression7>
+<expression8> % <expression7>
 
 <expression8> is
+<expression9>
++ <expression9>
+- <expression9>
+! <expression9>
+~ <expression9>
+
+<expression9> is
 <variable>
 <constant>
 <call>

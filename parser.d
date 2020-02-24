@@ -62,7 +62,19 @@ struct Line
 				else if (":+-*/%&|^><!".canFind (t.front))
 				{
 					int pos = 1;
-					if (t.length > 1 && t[1] == '=')
+					if (t.startsWith (">>>"))
+					{
+						pos += 2;
+					}
+					else if (t.startsWith (">>"))
+					{
+						pos += 1;
+					}
+					else if (t.startsWith ("<<"))
+					{
+						pos += 1;
+					}
+					if (t.length > pos && t[pos] == '=')
 					{
 						pos += 1;
 					}
@@ -178,7 +190,7 @@ Expression parseExpression (ref Line line)
 		return new VarExpression (name, index);
 	}
 
-	Expression parse8 () ()
+	Expression parse9 () ()
 	{
 		check (!line.tokens.empty, line, "end of line in expression");
 		if (line.tokens.front == "(")
@@ -211,7 +223,7 @@ Expression parseExpression (ref Line line)
 		assert (false);
 	}
 
-	Expression parse7 () ()
+	Expression parse8 () ()
 	{
 		if (!line.tokens.empty &&
 		    (line.tokens.front == "+" || line.tokens.front == "-" ||
@@ -230,13 +242,13 @@ Expression parseExpression (ref Line line)
 		}
 		else
 		{
-			return parse8 ();
+			return parse9 ();
 		}
 	}
 
-	Expression parse6 () ()
+	Expression parse7 () ()
 	{
-		auto res = parse7 ();
+		auto res = parse8 ();
 		while (!line.tokens.empty && (line.tokens.front == "*" ||
 		    line.tokens.front == "/" || line.tokens.front == "%"))
 		{
@@ -245,6 +257,22 @@ Expression parseExpression (ref Line line)
 			    (line.tokens.front == "/") ?
 			    BinaryOpExpression.Type.divide :
 			    BinaryOpExpression.Type.modulo;
+			line.tokens.popFront ();
+			auto next = parse8 ();
+			res = new BinaryOpExpression (type, res, next);
+		}
+		return res;
+	}
+
+	Expression parse6 () ()
+	{
+		auto res = parse7 ();
+		while (!line.tokens.empty &&
+		    (line.tokens.front == "+" || line.tokens.front == "-"))
+		{
+			auto type = (line.tokens.front == "+") ?
+			    BinaryOpExpression.Type.add :
+			    BinaryOpExpression.Type.subtract;
 			line.tokens.popFront ();
 			auto next = parse7 ();
 			res = new BinaryOpExpression (type, res, next);
@@ -255,12 +283,14 @@ Expression parseExpression (ref Line line)
 	Expression parse5 () ()
 	{
 		auto res = parse6 ();
-		while (!line.tokens.empty &&
-		    (line.tokens.front == "+" || line.tokens.front == "-"))
+		while (!line.tokens.empty && (line.tokens.front == ">>" ||
+		    line.tokens.front == ">>>" || line.tokens.front == "<<"))
 		{
-			auto type = (line.tokens.front == "+") ?
-			    BinaryOpExpression.Type.add :
-			    BinaryOpExpression.Type.subtract;
+			auto type = (line.tokens.front == ">>") ?
+			    BinaryOpExpression.Type.sar :
+			    (line.tokens.front == ">>>") ?
+			    BinaryOpExpression.Type.shr :
+			    BinaryOpExpression.Type.shl;
 			line.tokens.popFront ();
 			auto next = parse6 ();
 			res = new BinaryOpExpression (type, res, next);
@@ -452,8 +482,9 @@ final class StatementParser
 
 		check (!line.tokens.empty, line,
 		    "expected assignment operator, found end of line");
-		auto op = line.tokens.consume !(op => op.length == 2 &&
-		    ":+-*/%|^&".canFind (op[0]) && op[1] == '=')
+		auto op = line.tokens.consume !(op => (op.length == 2 &&
+		    ":+-*/%|^&".canFind (op[0]) && op[1] == '=') ||
+		    (op == ">>=") || (op == ">>>=") || (op == "<<="))
 		    (line, "expected assignment operator, found " ~
 		    line.tokens.front);
 		auto type =
@@ -465,6 +496,9 @@ final class StatementParser
 		    (op == "|=") ? AssignStatement.Type.assignOr :
 		    (op == "^=") ? AssignStatement.Type.assignXor :
 		    (op == "&=") ? AssignStatement.Type.assignAnd :
+		    (op == ">>=") ? AssignStatement.Type.assignSar :
+		    (op == ">>>=") ? AssignStatement.Type.assignShr :
+		    (op == "<<=") ? AssignStatement.Type.assignShl :
 		    AssignStatement.Type.assign;
 
 		auto cur = parseExpression (line);

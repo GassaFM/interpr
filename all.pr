@@ -8,6 +8,10 @@ function sum (id, pr, n, a):
 	x ^= id
 	x &= id
 	x |= id
+	x >>= id
+	x >>>= id
+	x <<= id
+	x := id >> id >>> id << id
 	x := (((id > pr) & (id < pr) | (id == pr) ^ (id >= pr)))
 	x := (((id <= pr)) & ((id != pr)))
 	x := id + id - id * id / id % pr ^ pr & pr | pr

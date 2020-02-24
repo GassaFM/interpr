@@ -17,7 +17,7 @@ void main (string [] args)
 	auto p = s.parse (f.byLineCopy.array);
 	auto n = readln.strip.to !(long);
 	auto a = readln.splitter.map !(to !(long)).array;
-	auto rc = new RunnerControl (2, p, n, a);
+	auto rc = new RunnerControl (100, p, n, a);
 	int step;
 	for (step = 0; rc.step (); step++)
 	{

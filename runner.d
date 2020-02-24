@@ -65,7 +65,7 @@ class Runner
 		int argNum = 0;
 		static foreach (cur; args)
 		{
-			writeln (cur);
+//			writeln (cur);
 			if (argNum >= p.parameterList.length)
 			{
 				throw new Exception ("not enough parameters");
@@ -291,6 +291,22 @@ class Runner
 		return res;
 	}
 
+	void doAssign (AssignStatement cur, long * addr, long value)
+	{
+		with (cur) final switch (type)
+		{
+		case Type.assign:         *(addr) = value; break;
+		case Type.assignAdd:      *(addr) += value; break;
+		case Type.assignSubtract: *(addr) -= value; break;
+		case Type.assignMultiply: *(addr) *= value; break;
+		case Type.assignDivide:   *(addr) /= value; break;
+		case Type.assignModulo:   *(addr) %= value; break;
+		case Type.assignXor:      *(addr) ^= value; break;
+		case Type.assignAnd:      *(addr) &= value; break;
+		case Type.assignOr:       *(addr) |= value; break;
+		}
+	}
+
 	void runStatementReceive (AssignStatement cur, CallExpression call)
 	{
 		auto values = call.argumentList
@@ -315,15 +331,17 @@ class Runner
 		}
 
 		auto otherId = values[0].to !(size_t);
-		if (control.queues[id][otherId].empty)
+		if (control.queues[otherId][id].empty)
 		{
 			state.back.pos -= 1;
 			delay = 1;
+			return;
 		}
+
 		auto addr = getAddr (cur.dest, true);
-		*addr = control.queues[id][otherId].front;
-		control.queues[id][otherId].popFront ();
-		control.queues[id][otherId].assumeSafeAppend ();
+		doAssign (cur, addr, control.queues[otherId][id].front);
+		control.queues[otherId][id].popFront ();
+		control.queues[otherId][id].assumeSafeAppend ();
 	}
 
 	void runStatementArray (AssignStatement cur, CallExpression call)
@@ -336,12 +354,10 @@ class Runner
 			throw new Exception
 			    ("array: no first argument");
 		}
-		if (values[0] < 0 || control.num <= values[0])
+		if (values[0] < 0)
 		{
 			throw new Exception ("array: " ~
-			    "first argument " ~
-			    values[0].text ~ " not in [0.." ~
-			    control.num.text ~ ")");
+			    "first argument is " ~ values[0].text);
 		}
 		if (values.length > 1)
 		{
@@ -364,37 +380,23 @@ class Runner
 		if (cur0 !is null) with (cur0)
 		{
 			// special syntax for receive and array
-			if (type == Type.assign)
+			auto expr0 = cast (CallExpression) (expr);
+			if (expr0 !is null && expr0.name == "receive")
 			{
-				auto expr0 = cast (CallExpression) (expr);
-				if (expr0 !is null &&
-				    expr0.name == "receive")
-				{
-					runStatementReceive (cur0, expr0);
-					return;
-				}
-				if (expr0 !is null &&
-				    expr0.name == "array")
-				{
-					runStatementArray (cur0, expr0);
-					return;
-				}
+				runStatementReceive (cur0, expr0);
+				return;
+			}
+
+			if (type == Type.assign &&
+			    expr0 !is null && expr0.name == "array")
+			{
+				runStatementArray (cur0, expr0);
+				return;
 			}
 
 			auto value = evalExpression (expr);
 			auto addr = getAddr (dest, type == Type.assign);
-			final switch (type)
-			{
-			case Type.assign:         *(addr) = value; break;
-			case Type.assignAdd:      *(addr) += value; break;
-			case Type.assignSubtract: *(addr) -= value; break;
-			case Type.assignMultiply: *(addr) *= value; break;
-			case Type.assignDivide:   *(addr) /= value; break;
-			case Type.assignModulo:   *(addr) %= value; break;
-			case Type.assignXor:      *(addr) ^= value; break;
-			case Type.assignAnd:      *(addr) &= value; break;
-			case Type.assignOr:       *(addr) |= value; break;
-			}
+			doAssign (cur0, addr, value);
 			delay = complexity;
 			return;
 		}
@@ -425,7 +427,11 @@ class Runner
 
 		with (state.back)
 		{
-			writeln (delay, " ", state.back.vars, state.back.pos);
+/*
+			writeln (id, " ", state.map !(s => s.vars),
+			    " " , state.map !(s => s.pos));
+*/
+//			writefln ("%(%s\n%)", control.queues);
 			auto cur0 = cast (FunctionBlock) (parent);
 			if (cur0 !is null) with (cur0)
 			{
@@ -486,6 +492,49 @@ class Runner
 						block = statementList;
 						pos += 1;
 						delay = complexity;
+					}
+					else
+					{
+						state.popBack ();
+					}
+				}
+				else
+				{
+					pos += 1;
+					runStatement (block[pos - 1]);
+				}
+				return true;
+			}
+
+			auto cur3 = cast (ForBlock) (parent);
+			if (cur3 !is null) with (cur3)
+			{
+//				writeln ("!", id, " ", pos);
+				if (pos < 0)
+				{
+					block = statementList;
+					auto startValue =
+					    evalExpression (start);
+					auto finishValue =
+					    evalExpression (finish);
+					vars[name] = Var (startValue);
+					if (vars[name].value < finishValue)
+					{
+						pos += 1;
+					}
+					else
+					{
+						state.popBack ();
+					}
+				}
+				else if (pos >= block.length)
+				{
+					auto finishValue =
+					    evalExpression (finish);
+					vars[name].value += 1;
+					if (vars[name].value < finishValue)
+					{
+						pos = 0;
 					}
 					else
 					{

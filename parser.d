@@ -408,13 +408,17 @@ final class StatementParser
 		IfBlock res = new IfBlock (line.lineId, cond);
 		res.statementListTrue = parseBlock (prevIndent);
 
-		line = t.front;
-		if (line.tokens.front == "else")
+		if (!t.empty)
 		{
-			t.popFront ();
-			line.tokens.consume ("else", line);
-			line.tokens.consume (":", line);
-			res.statementListFalse = parseBlock (prevIndent);
+			line = t.front;
+			if (line.tokens.front == "else")
+			{
+				t.popFront ();
+				line.tokens.consume ("else", line);
+				line.tokens.consume (":", line);
+				res.statementListFalse =
+				    parseBlock (prevIndent);
+			}
 		}
 		return res;
 	}

@@ -200,8 +200,6 @@ class Runner
 		Statement [] block;
 		Var [string] vars;
 		Array [string] arrays;
-
-		@disable this (this);
 	}
 
 	Context [] state;
@@ -272,6 +270,30 @@ class Runner
 		throw new Exception ("no such array: " ~ name);
 	}
 
+	long evalCall (CallExpression call)
+	{
+		auto values = call.argumentList
+		    .map !(e => evalExpression (e)).array;
+
+		if (call.name == "send")
+		{
+			return 0;
+		}
+
+		if (call.name == "receive")
+		{
+			return 0;
+		}
+
+		if (call.name == "print")
+		{
+			writefln ("%(%s %)", values);
+			return 0;
+		}
+
+		assert (false);
+	}
+
 	long evalExpression (Expression e)
 	{
 		long res = 0;
@@ -280,6 +302,8 @@ class Runner
 
 	void runStatement (Statement s)
 	{
+		writeln (s);
+
 		auto cur0 = cast (AssignStatement) (s);
 		if (cur0 !is null) with (cur0)
 		{
@@ -307,10 +331,19 @@ class Runner
 				addr = arrayAddress (dest.name, indexValue);
 			}
 			*(addr) = value;
+			delay = complexity;
 			return;
 		}
 
-		assert (false);
+		auto cur1 = cast (CallStatement) (s);
+		if (cur1 !is null) with (cur1)
+		{
+			evalCall (call);
+			delay = complexity;
+			return;
+		}
+
+		state ~= Context (s, -1);
 	}
 
 	bool step ()
@@ -330,13 +363,13 @@ class Runner
 		{
 			writeln (delay, " ", state.back.vars, state.back.pos);
 			auto cur0 = cast (FunctionBlock) (parent);
-			if (cur0 !is null)
+			if (cur0 !is null) with (cur0)
 			{
 				if (pos < 0)
 				{
 					pos += 1;
-					block = cur0.statementList;
-					delay = cur0.complexity;
+					block = statementList;
+					delay = complexity;
 				}
 				else if (pos >= block.length)
 				{
@@ -351,17 +384,16 @@ class Runner
 			}
 
 			auto cur1 = cast (IfBlock) (parent);
-			if (cur1 !is null)
+			if (cur1 !is null) with (cur1)
 			{
 				if (pos < 0)
 				{
-					auto value = evalExpression
-					    (cur1.cond);
+					auto value = evalExpression (cond);
 					block = value ?
-					    cur1.statementListTrue :
-					    cur1.statementListFalse;
+					    statementListTrue :
+					    statementListFalse;
 					pos += 1;
-					delay = cur1.complexity;
+					delay = complexity;
 				}
 				else if (pos >= block.length)
 				{
@@ -371,7 +403,35 @@ class Runner
 				{
 					pos += 1;
 					runStatement (block[pos - 1]);
-					delay = block[pos - 1].complexity;
+				}
+				return true;
+			}
+
+			auto cur2 = cast (WhileBlock) (parent);
+			if (cur2 !is null) with (cur2)
+			{
+				if (pos >= block.length)
+				{
+					pos = -1;
+				}
+				if (pos < 0)
+				{
+					auto value = evalExpression (cond);
+					if (value)
+					{
+						block = statementList;
+						pos += 1;
+						delay = complexity;
+					}
+					else
+					{
+						state.popBack ();
+					}
+				}
+				else
+				{
+					pos += 1;
+					runStatement (block[pos - 1]);
 				}
 				return true;
 			}

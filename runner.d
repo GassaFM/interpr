@@ -240,6 +240,11 @@ class Runner
 		{
 			if (name in cur.vars)
 			{
+				if (cur.vars[name].isConst)
+				{
+					throw new Exception ("array " ~ name ~
+					    " is constant");
+				}
 				return &(cur.vars[name].value);
 			}
 		}
@@ -255,8 +260,13 @@ class Runner
 	{
 		foreach_reverse (ref cur; state)
 		{
-			if (name in cur.vars)
+			if (name in cur.arrays)
 			{
+				if (cur.arrays[name].isConst)
+				{
+					throw new Exception ("array " ~ name ~
+					    " is constant");
+				}
 				if (index < 0 ||
 				    cur.arrays[name].contents.length <= index)
 				{
@@ -265,6 +275,37 @@ class Runner
 				}
 				return &(cur.arrays[name]
 				    .contents[index.to !(size_t)]);
+			}
+		}
+		throw new Exception ("no such array: " ~ name);
+	}
+
+	long varValue (string name)
+	{
+		foreach_reverse (ref cur; state)
+		{
+			if (name in cur.vars)
+			{
+				return cur.vars[name].value;
+			}
+		}
+		throw new Exception ("no such variable: " ~ name);
+	}
+
+	long arrayValue (string name, long index)
+	{
+		foreach_reverse (ref cur; state)
+		{
+			if (name in cur.arrays)
+			{
+				if (index < 0 ||
+				    cur.arrays[name].contents.length <= index)
+				{
+					throw new Exception ("array " ~ name ~
+					    ": no index " ~ index.text);
+				}
+				return cur.arrays[name]
+				    .contents[index.to !(size_t)];
 			}
 		}
 		throw new Exception ("no such array: " ~ name);
@@ -295,9 +336,76 @@ class Runner
 	}
 
 	long evalExpression (Expression e)
+	out (res)
 	{
-		long res = 0;
-		return res;
+		writeln ("res = ", res);
+	}
+	body
+	{
+		auto cur0 = cast (BinaryOpExpression) (e);
+		if (cur0 !is null) with (cur0)
+		{
+			auto leftValue = evalExpression (left);
+			auto rightValue = evalExpression (right);
+			final switch (type)
+			{
+			case Type.add:          return leftValue + rightValue;
+			case Type.subtract:     return leftValue - rightValue;
+			case Type.multiply:     return leftValue * rightValue;
+			case Type.divide:       return leftValue / rightValue;
+			case Type.modulo:       return leftValue % rightValue;
+			case Type.xor:          return leftValue ^ rightValue;
+			case Type.and:          return leftValue & rightValue;
+			case Type.or:           return leftValue | rightValue;
+			case Type.greater:      return leftValue > rightValue;
+			case Type.greaterEqual: return leftValue >= rightValue;
+			case Type.less:         return leftValue < rightValue;
+			case Type.lessEqual:    return leftValue <= rightValue;
+			case Type.equal:        return leftValue == rightValue;
+			case Type.notEqual:     return leftValue != rightValue;
+			}
+		}
+
+		auto cur1 = cast (UnaryOpExpression) (e);
+		if (cur1 !is null) with (cur1)
+		{
+			auto value = evalExpression (expr);
+			final switch (type)
+			{
+			case Type.plus:       return +value;
+			case Type.minus:      return -value;
+			case Type.not:        return !value;
+			case Type.complement: return ~value;
+			}
+		}
+
+		auto cur2 = cast (VarExpression) (e);
+		if (cur2 !is null) with (cur2)
+		{
+			if (index is null)
+			{
+				return varValue (name);
+			}
+			else
+			{
+				auto indexValue = evalExpression (index);
+				return arrayValue (name, indexValue);
+			}
+		}
+
+		auto cur3 = cast (ConstExpression) (e);
+		if (cur3 !is null) with (cur3)
+		{
+			return value;
+		}
+
+		auto cur4 = cast (CallExpression) (e);
+		if (cur4 !is null) with (cur4)
+		{
+			return evalCall (cur4);
+		}
+
+		assert (false);
 	}
 
 	void runStatement (Statement s)
@@ -330,7 +438,18 @@ class Runner
 				auto indexValue = evalExpression (dest.index);
 				addr = arrayAddress (dest.name, indexValue);
 			}
-			*(addr) = value;
+			final switch (type)
+			{
+			case Type.assign:         *(addr) = value; break;
+			case Type.assignAdd:      *(addr) += value; break;
+			case Type.assignSubtract: *(addr) -= value; break;
+			case Type.assignMultiply: *(addr) *= value; break;
+			case Type.assignDivide:   *(addr) /= value; break;
+			case Type.assignModulo:   *(addr) %= value; break;
+			case Type.assignXor:      *(addr) ^= value; break;
+			case Type.assignAnd:      *(addr) &= value; break;
+			case Type.assignOr:       *(addr) |= value; break;
+			}
 			delay = complexity;
 			return;
 		}

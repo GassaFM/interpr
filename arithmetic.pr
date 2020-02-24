@@ -10,3 +10,17 @@ function arithmetic (id, pr, num, arr):
 		print (c)
 	print (a)
 	print (b)
+	print (-5 >> 1)
+	print (-5 >>> 1)
+	print (-5 << 1)
+	x := -5
+	x >>= 1
+	print (x)
+	x <<= 1
+	print (x)
+	x >>>= 1
+	print (x)
+	x <<= 1
+	print (x)
+	x <<= 1
+	print (x)

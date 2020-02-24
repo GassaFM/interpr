@@ -311,7 +311,7 @@ class Runner
 		case Type.assignSar:      *(addr) >>= value; break;
 		case Type.assignShr:      *(cast (ulong *) (addr)) >>= value;
 		    break;
-		case Type.assignShl:      *(addr) |= value; break;
+		case Type.assignShl:      *(addr) <<= value; break;
 		}
 	}
 

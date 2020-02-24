@@ -487,11 +487,11 @@ class Runner
 				if (pos < 0)
 				{
 					auto value = evalExpression (cond);
+					delay = complexity;
 					if (value)
 					{
 						block = statementList;
 						pos += 1;
-						delay = complexity;
 					}
 					else
 					{
@@ -518,6 +518,8 @@ class Runner
 					auto finishValue =
 					    evalExpression (finish);
 					vars[name] = Var (startValue);
+					delay = complexity;
+					delay += 3;
 					if (vars[name].value < finishValue)
 					{
 						pos += 1;
@@ -532,6 +534,7 @@ class Runner
 					auto finishValue =
 					    evalExpression (finish);
 					vars[name].value += 1;
+					delay += 3;
 					if (vars[name].value < finishValue)
 					{
 						pos = 0;

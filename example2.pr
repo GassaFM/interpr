@@ -1,0 +1,19 @@
+function sum (id, pr, n, a):
+	lo := id * n / pr
+	hi := (id + 1) * n / pr
+
+	s := 0
+	for i := lo until hi:
+		s += a[i]
+
+	left := id * 2 + 1
+	right := left + 1
+	if left < pr:
+		s += receive (left)
+	if right < pr:
+		s += receive (right)
+
+	send ((id - 1) / 2, s)
+
+	if id == 0:
+		print (s)

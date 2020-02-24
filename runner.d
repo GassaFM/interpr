@@ -534,7 +534,7 @@ class Runner
 					auto finishValue =
 					    evalExpression (finish);
 					vars[name].value += 1;
-					delay += 3;
+					delay += 7;
 					if (vars[name].value < finishValue)
 					{
 						pos = 0;

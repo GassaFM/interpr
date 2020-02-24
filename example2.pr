@@ -1,10 +1,9 @@
 function sum (id, pr, n, a):
-	lo := id * n / pr
-	hi := (id + 1) * n / pr
-
 	s := 0
-	for i := lo until hi:
+	i := id
+	while i < n:
 		s += a[i]
+		i += pr
 
 	left := id * 2 + 1
 	right := left + 1

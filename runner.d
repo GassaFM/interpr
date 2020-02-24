@@ -170,6 +170,12 @@ class Runner
 		long value;
 		bool isConst;
 
+		this (long value_, bool isConst_ = false)
+		{
+			value = value_;
+			isConst = isConst_;
+		}
+
 		@disable this (this);
 	}
 
@@ -177,6 +183,12 @@ class Runner
 	{
 		long [] contents;
 		bool isConst;
+
+		this (long [] contents_, bool isConst_ = false)
+		{
+			contents = contents_;
+			isConst = isConst_;
+		}
 
 		@disable this (this);
 	}
@@ -224,6 +236,42 @@ class Runner
 		}
 	}
 
+	long * varAddress (string name, bool canCreate = false)
+	{
+		foreach_reverse (ref cur; state)
+		{
+			if (name in cur.vars)
+			{
+				return &(cur.vars[name].value);
+			}
+		}
+		if (!canCreate)
+		{
+			throw new Exception ("no such variable: " ~ name);
+		}
+		state.back.vars[name] = Var (0);
+		return &(state.back.vars[name].value);
+	}
+
+	long * arrayAddress (string name, long index)
+	{
+		foreach_reverse (ref cur; state)
+		{
+			if (name in cur.vars)
+			{
+				if (index < 0 ||
+				    cur.arrays[name].contents.length <= index)
+				{
+					throw new Exception ("array " ~ name ~
+					    ": no index " ~ index.text);
+				}
+				return &(cur.arrays[name]
+				    .contents[index.to !(size_t)]);
+			}
+		}
+		throw new Exception ("no such array: " ~ name);
+	}
+
 	long evalExpression (Expression e)
 	{
 		long res = 0;
@@ -232,6 +280,37 @@ class Runner
 
 	void runStatement (Statement s)
 	{
+		auto cur0 = cast (AssignStatement) (s);
+		if (cur0 !is null) with (cur0)
+		{
+			// special syntax for creating arrays
+			if (type == Type.assign)
+			{
+				auto expr0 = cast (CallStatement) (expr);
+				if (expr0 !is null &&
+				    expr0.call.name == "array")
+				{
+					// goes here
+					return;
+				}
+			}
+			auto value = evalExpression (expr);
+			long * addr;
+			if (dest.index is null)
+			{
+				addr = varAddress (dest.name,
+				    type == Type.assign);
+			}
+			else
+			{
+				auto indexValue = evalExpression (dest.index);
+				addr = arrayAddress (dest.name, indexValue);
+			}
+			*(addr) = value;
+			return;
+		}
+
+		assert (false);
 	}
 
 	bool step ()
@@ -249,6 +328,7 @@ class Runner
 
 		with (state.back)
 		{
+			writeln (delay, " ", state.back.vars, state.back.pos);
 			auto cur0 = cast (FunctionBlock) (parent);
 			if (cur0 !is null)
 			{
@@ -291,6 +371,7 @@ class Runner
 				{
 					pos += 1;
 					runStatement (block[pos - 1]);
+					delay = block[pos - 1].complexity;
 				}
 				return true;
 			}
@@ -313,5 +394,5 @@ void main (string [] args)
 	{
 		writeln (step);
 	}
-	display (p);
+//	display (p);
 }

@@ -1,3 +1,3 @@
-n = 987654
+n = 200000
 print (n)
-print (' '.join (map (str, range (1, n + 1))))
+print (' '.join (map (str, range (0, n + 0))))

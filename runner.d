@@ -1,5 +1,5 @@
 // Author: Ivan Kazmenko (gassa@mail.ru)
-module display;
+module runner;
 import std.algorithm;
 import std.conv;
 import std.exception;
@@ -48,11 +48,18 @@ class Runner
 		Array [string] arrays;
 	}
 
+	RunnerControl control;
+	int id;
+
 	Context [] state;
 	int delay;
 
-	this (Args...) (FunctionBlock p, Args args)
+	this (Args...) (RunnerControl control_, int id_,
+	    FunctionBlock p, Args args)
 	{
+		control = control_;
+		id = id_;
+
 		state = [Context (p, -1)];
 		delay = 0;
 		int argNum = 0;
@@ -164,12 +171,30 @@ class Runner
 
 		if (call.name == "send")
 		{
+			if (values.length < 1)
+			{
+				throw new Exception
+				    ("send: no first argument");
+			}
+			if (values[0] < 0 || control.num <= values[0])
+			{
+				throw new Exception ("send: first argument " ~
+				    values[0].text ~ " not in [0.." ~
+				    control.num.text ~ ")");
+			}
+			control.queues[id][values[0].to !(size_t)] ~=
+			    values[1..$];
 			return 0;
 		}
 
 		if (call.name == "receive")
 		{
-			return 0;
+			throw new Exception ("can only assign with receive");
+		}
+
+		if (call.name == "array")
+		{
+			throw new Exception ("can only assign with array");
 		}
 
 		if (call.name == "print")
@@ -250,34 +275,113 @@ class Runner
 		assert (false);
 	}
 
+	long * getAddr (VarExpression dest, bool canCreate)
+	{
+		long * res;
+		if (dest.index is null)
+		{
+			res = varAddress (dest.name, canCreate);
+		}
+		else
+		{
+			auto indexValue = evalExpression (dest.index);
+			res = arrayAddress (dest.name, indexValue);
+		}
+		return res;
+	}
+
+	void runStatementReceive (AssignStatement cur, CallExpression call)
+	{
+		auto values = call.argumentList
+		    .map !(e => evalExpression (e)).array;
+
+		if (values.length < 1)
+		{
+			throw new Exception
+			    ("receive: no first argument");
+		}
+		if (values[0] < 0 || control.num <= values[0])
+		{
+			throw new Exception ("receive: " ~
+			    "first argument " ~
+			    values[0].text ~ " not in [0.." ~
+			    control.num.text ~ ")");
+		}
+		if (values.length > 1)
+		{
+			throw new Exception
+			    ("receive: more than one argument");
+		}
+
+		auto otherId = values[0].to !(size_t);
+		if (control.queues[id][otherId].empty)
+		{
+			state.back.pos -= 1;
+			delay = 1;
+		}
+		auto addr = getAddr (cur.dest, true);
+		*addr = control.queues[id][otherId].front;
+		control.queues[id][otherId].popFront ();
+		control.queues[id][otherId].assumeSafeAppend ();
+	}
+
+	void runStatementArray (AssignStatement cur, CallExpression call)
+	{
+		auto values = call.argumentList
+		    .map !(e => evalExpression (e)).array;
+
+		if (values.length < 1)
+		{
+			throw new Exception
+			    ("array: no first argument");
+		}
+		if (values[0] < 0 || control.num <= values[0])
+		{
+			throw new Exception ("array: " ~
+			    "first argument " ~
+			    values[0].text ~ " not in [0.." ~
+			    control.num.text ~ ")");
+		}
+		if (values.length > 1)
+		{
+			throw new Exception
+			    ("array: more than one argument");
+		}
+
+		if (cur.dest.index !is null)
+		{
+			throw new Exception
+			    ("array: destination can not have index");
+		}
+		state.back.arrays[cur.dest.name] =
+		    Array (new long [values[0].to !(size_t)]);
+	}
+
 	void runStatement (Statement s)
 	{
 		auto cur0 = cast (AssignStatement) (s);
 		if (cur0 !is null) with (cur0)
 		{
-			// special syntax for creating arrays
+			// special syntax for receive and array
 			if (type == Type.assign)
 			{
-				auto expr0 = cast (CallStatement) (expr);
+				auto expr0 = cast (CallExpression) (expr);
 				if (expr0 !is null &&
-				    expr0.call.name == "array")
+				    expr0.name == "receive")
 				{
-					// goes here
+					runStatementReceive (cur0, expr0);
+					return;
+				}
+				if (expr0 !is null &&
+				    expr0.name == "array")
+				{
+					runStatementArray (cur0, expr0);
 					return;
 				}
 			}
+
 			auto value = evalExpression (expr);
-			long * addr;
-			if (dest.index is null)
-			{
-				addr = varAddress (dest.name,
-				    type == Type.assign);
-			}
-			else
-			{
-				auto indexValue = evalExpression (dest.index);
-				addr = arrayAddress (dest.name, indexValue);
-			}
+			auto addr = getAddr (dest, type == Type.assign);
 			final switch (type)
 			{
 			case Type.assign:         *(addr) = value; break;
@@ -400,18 +504,33 @@ class Runner
 	}
 }
 
-void main (string [] args)
+class RunnerControl
 {
-	auto f = File (args[1], "rt");
-	auto s = new StatementParser ();
-	auto p = s.parse (f.byLineCopy.array);
-	auto n = readln.strip.to !(long);
-	auto a = readln.splitter.map !(to !(long)).array;
-	auto r = new Runner (p, 0, 1, n, a);
-	int step;
-	for (step = 0; r.step (); step++)
+	Runner [] runners;
+	long [] [] [] queues;
+
+	@property int num () const
 	{
-//		writeln (step);
+		return runners.length.to !(int);
 	}
-//	display (p);
+
+	this (Args...) (int num_, Args args)
+	{
+		runners = new Runner [num_];
+		foreach (i, ref r; runners)
+		{
+			r = new Runner (this, i.to !(int), args);
+		}
+		queues = new long [] [] [] (num_, num_);
+	}
+
+	bool step ()
+	{
+		bool isRunning = false;
+		foreach (ref r; runners)
+		{
+			isRunning |= r.step ();
+		}
+		return isRunning;
+	}
 }

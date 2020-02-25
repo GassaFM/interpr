@@ -1,3 +1,5 @@
+## Pr
+
 This is an interpreter for Pr, a toy language to learn parallel computing.
 
 This document starts with an [example](#example) showcasing the language and its usage.

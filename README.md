@@ -215,7 +215,7 @@ The possible binary operators are, grouped from lower to higher priority:
   - `&` (bitwise and)
   - `==` (equal), `!=` (not equal)
   - `>` (greater), `>=` (greater or equal), `<` (less), `<=` (less or equal)
-  - `>>` (arithmetic shift right), `>>>` (logical shift right), `<< (shift left)
+  - `>>` (arithmetic shift right), `>>>` (logical shift right), `<<` (shift left)
   - `+` (add), `-` (subtract),
   - `*` (multiply), `/` (divide), `%` (modulo)
 

@@ -6,6 +6,8 @@ This document starts with an [example](#example) showcasing the language and its
 Then follows a section on [syntax](#syntax) with formal definitions.
 After that, it discusses command-line [invocation](#invocation) and options.
 
+Grab a Windows executable, or the source code, in the [releases](https://github.com/GassaFM/interpr/releases) section.
+
 ## Example
 
 ### Example Problem

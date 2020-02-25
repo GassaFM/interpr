@@ -80,7 +80,7 @@ final class ForBlock : Statement
 		name = name_;
 		start = start_;
 		finish = finish_;
-		complexity = 1 + start.complexity + finish.complexity;
+		complexity = 1 + 1 + start.complexity + finish.complexity;
 	}
 }
 

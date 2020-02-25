@@ -65,7 +65,6 @@ class Runner
 		int argNum = 0;
 		static foreach (cur; args)
 		{
-//			writeln (cur);
 			if (argNum >= p.parameterList.length)
 			{
 				throw new Exception ("not enough parameters");
@@ -422,24 +421,19 @@ class Runner
 
 	bool step ()
 	{
-		if (state.empty)
-		{
-			return false;
-		}
-
 		if (delay > 0)
 		{
 			delay -= 1;
 			return true;
 		}
 
+		if (state.empty)
+		{
+			return false;
+		}
+
 		with (state.back)
 		{
-/*
-			writeln (id, " ", state.map !(s => s.vars),
-			    " " , state.map !(s => s.pos));
-*/
-//			writefln ("%(%s\n%)", control.queues);
 			auto cur0 = cast (FunctionBlock) (parent);
 			if (cur0 !is null) with (cur0)
 			{
@@ -517,7 +511,6 @@ class Runner
 			auto cur3 = cast (ForBlock) (parent);
 			if (cur3 !is null) with (cur3)
 			{
-//				writeln ("!", id, " ", pos);
 				if (pos < 0)
 				{
 					block = statementList;

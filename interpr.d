@@ -11,7 +11,7 @@ import language;
 import parser;
 import runner;
 
-void main (string [] args)
+int main (string [] args)
 {
 	// set default parameters
 	bool compileOnly = false;
@@ -52,14 +52,23 @@ void main (string [] args)
 	// compile program
 	auto f = File (fileName, "rt");
 	auto s = new StatementParser ();
-	auto p = s.parse (f.byLineCopy.array);
+	FunctionBlock p;
+	try
+	{
+		p = s.parse (f.byLineCopy.array);
+	}
+	catch (Exception e)
+	{
+		stderr.writeln (e.msg);
+		return 1;
+	}
 	if (doDisplay)
 	{
 		displayFunction (p);
 	}
 	if (compileOnly)
 	{
-		return;
+		return 0;
 	}
 
 	// read input
@@ -72,7 +81,15 @@ void main (string [] args)
 	bool working = true;
 	for (step = 0; step < steps && working; step++)
 	{
-		working &= rc.step ();
+		try
+		{
+			working &= rc.step ();
+		}
+		catch (Exception e)
+		{
+			stderr.writeln (e.msg);
+			return 1;
+		}
 	}
 	stderr.writeln ("steps: ", step);
 
@@ -83,4 +100,6 @@ void main (string [] args)
 		{
 		}
 	}
+
+	return 0;
 }

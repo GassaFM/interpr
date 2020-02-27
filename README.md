@@ -1,5 +1,7 @@
 ## Pr
 
+(К [русской](README.ru.md#pr) версии)
+
 This is an interpreter for Pr, a toy language to learn parallel computing.
 
 This document starts with an [example](#example) showcasing the language and its usage.
@@ -140,17 +142,17 @@ Here is a summary of language syntax.
 
 There are two data types in Pr: 64-bit signed integers and arrays of 64-bit signed integers.
 An integer variable is addressed by its name, as `<name>`.
-An array element is addressed by array name and element index, as `<name>[expr]`.
-Each variable is visible in the scope where it was declared, and all nested scopes.
+An array element is addressed by array name and element index, as `<name>[<expr>]`.
+Each variable is visible in the block where it was declared, and all nested blocks.
 A name can contain alphanumeric characters and underscores, and can not start with a digit.
 
 ### Functions
 
 Each program is a single function declared as:
 ```
-function <name> (arg1, arg2, ...):
-    statement1
-    statement2
+function <name> (<arg1>, <arg2>, ...):
+    <statement1>
+    <statement2>
     ...
 ```
 
@@ -162,15 +164,15 @@ Function header is followed by statements, one per line, all using the same inde
 
 There are four special functions defined as well:
 
-* `print (expr1, expr2, ...)` prints the values of the expressions separated by spaces,
+* `print (<expr1>, <expr2>, ...)` prints the values of the expressions separated by spaces,
 followed by end of line.
 
-* `<name> := array (len)` creates an array of length `len`, fills it with zeroes,
+* `<name> := array (<len>)` creates an array of length `<len>`, fills it with zeroes,
 and assigns the name `<name>` to it.
 
-* `send (dest, expr1, expt2, ...)` sends the values of the expressions to process `dest`.
+* `send (<dest>, <expr1>, <expr2>, ...)` sends the values of the expressions to process `<dest>`.
 
-* `<var> <assignOp> receive (from)` receives the next value from process `from`,
+* `<var> <assignOp> receive (<from>)` receives the next value from process `<from>`,
 waiting for it if necessary, and uses assignment operator `<assignOp>`
 to alter the value of variable `<var>`.
 
@@ -186,7 +188,7 @@ to alter the value of variable `<var>`.
 The assignment operator can be one of the following:
 `:=`, `+=`, `-=`, `*=`, `/=`, `%=`, `^=`, `|=`, `&=`, `>>=`, `>>>=`, `<<=`.
 
-* `<name> (arg1, arg2, ...)` is a call statement.
+* `<name> (<arg1>, <arg2>, ...)` is a call statement.
 It calls the function `<name>` with respective arguments.
 
 * `if <cond>:` is an if block.

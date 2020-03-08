@@ -541,8 +541,9 @@ final class StatementParser
 	{
 		auto nextLine = t.front;
 		auto newIndent = nextLine.indent;
-		check (newIndent.startsWith (prevIndent) &&
-		    newIndent != prevIndent, t.front,
+		check (newIndent.startsWith (prevIndent), t.front,
+		    "next indent does not start with previous");
+		check (newIndent != prevIndent, t.front,
 		    "no added indent for a block");
 
 		Statement [] res;

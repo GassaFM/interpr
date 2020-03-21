@@ -377,6 +377,16 @@ class Runner
 			throw new Exception
 			    ("array: destination can not have index");
 		}
+
+		foreach_reverse (ref curState; state)
+		{
+			if (cur.dest.name in curState.arrays)
+			{
+				curState.arrays[cur.dest.name] =
+				    Array (new long [values[0].to !(size_t)]);
+				return;
+			}
+		}
 		state.back.arrays[cur.dest.name] =
 		    Array (new long [values[0].to !(size_t)]);
 	}

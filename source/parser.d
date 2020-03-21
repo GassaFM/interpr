@@ -557,6 +557,11 @@ final class StatementParser
 
 	FunctionBlock parseFunctionBlock (string prevIndent)
 	{
+		if (t.empty)
+		{
+			enforce (!t.empty, "program is empty");
+		}
+
 		auto line = t.front;
 		check (line.indent == prevIndent, line,
 		    "indent does not match");

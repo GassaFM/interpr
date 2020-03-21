@@ -1,0 +1,6 @@
+name "interpr"
+description "Interpreter for Pr, toy programming language for learning parallel algorithms."
+authors "Ivan Kazmenko"
+homepage "https://github.com/GassaFM/interpr"
+license "MIT"
+targetType "executable"

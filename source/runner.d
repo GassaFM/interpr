@@ -203,7 +203,8 @@ class Runner
 			return 0;
 		}
 
-		assert (false);
+		throw new Exception ("call of non-existing function: " ~
+		    call.name);
 	}
 
 	long evalExpression (Expression e)

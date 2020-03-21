@@ -441,7 +441,8 @@ final class StatementParser
 		if (!t.empty)
 		{
 			line = t.front;
-			if (line.tokens.front == "else")
+			if (line.indent == prevIndent &&
+			    line.tokens.front == "else")
 			{
 				t.popFront ();
 				line.tokens.consume ("else", line);
@@ -556,6 +557,11 @@ final class StatementParser
 
 	FunctionBlock parseFunctionBlock (string prevIndent)
 	{
+		if (t.empty)
+		{
+			enforce (!t.empty, "program is empty");
+		}
+
 		auto line = t.front;
 		check (line.indent == prevIndent, line,
 		    "indent does not match");

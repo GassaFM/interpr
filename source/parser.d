@@ -441,7 +441,8 @@ final class StatementParser
 		if (!t.empty)
 		{
 			line = t.front;
-			if (line.tokens.front == "else")
+			if (line.indent == prevIndent &&
+			    line.tokens.front == "else")
 			{
 				t.popFront ();
 				line.tokens.consume ("else", line);

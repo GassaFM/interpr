@@ -10,6 +10,45 @@ After that, it discusses command-line [invocation](#invocation) and options.
 
 Grab a Windows executable, or the source code, in the [releases](https://github.com/GassaFM/interpr/releases) section.
 
+## Installing
+
+### Windows
+There is an executable file for Windows available on https://github.com/GassaFM/interpr/releases
+
+### Linux
+For Debian-based distributions you have to install dmd: 
+```
+~$ sudo apt install dmd
+```
+If package is not found, you need to install `snap`:
+```
+~$ sudo apt install snap snapd
+```
+Now you can install `dmd`:
+```
+~$ sudo snap install dmd --classic
+```
+For Arch you may use `pacman`:
+```
+~$ sudo pacman -S dmd
+```
+
+### macOS
+Run:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+brew install dmd
+```
+
+### Compiling the source
+After installing dmd, you should run:
+```
+~$ git clone https://github.com/GassaFM/interpr
+~$ cd interpr/source
+~$ dmd -of=interpr *.d
+```
+Now you have an executable file `interpr`.
+
 ## Example
 
 ### Example Problem

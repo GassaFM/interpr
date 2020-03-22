@@ -382,7 +382,7 @@ class Runner
 		    Array (new long [values[0].to !(size_t)]);
 	}
 
-	void runStatement (Statement s)
+	void runStatementImpl (Statement s)
 	{
 		auto cur0 = cast (AssignStatement) (s);
 		if (cur0 !is null) with (cur0)
@@ -418,6 +418,19 @@ class Runner
 		}
 
 		state ~= Context (s, -1);
+	}
+
+	void runStatement (Statement s)
+	{
+		try
+		{
+			runStatementImpl (s);
+		}
+		catch (Exception e)
+		{
+			throw new Exception (format
+			    ("line %s: %s", s.lineId, e.msg));
+		}
 	}
 
 	bool step ()
@@ -585,7 +598,15 @@ class RunnerControl
 		bool isRunning = false;
 		foreach (ref r; runners)
 		{
-			isRunning |= r.step ();
+			try
+			{
+				isRunning |= r.step ();
+			}
+			catch (Exception e)
+			{
+				throw new Exception (format
+				    ("id %s, %s", r.id, e.msg));
+			}
 		}
 		return isRunning;
 	}

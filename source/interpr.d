@@ -87,7 +87,7 @@ int main (string [] args)
 		}
 		catch (Exception e)
 		{
-			stderr.writeln (e.msg);
+			stderr.writeln ("step ", step, ", ", e.msg);
 			return 1;
 		}
 	}

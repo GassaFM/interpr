@@ -10,19 +10,19 @@
 
 Для дистрибутивов, основанных на Debian, вам нужно установить `dmd`: 
 ```
-~$ sudo apt install dmd
+sudo apt install dmd
 ```
 Если пакет не найден, то нужно установить `snap`:
 ```
-~$ sudo apt install snap snapd
+sudo apt install snap snapd
 ```
 Теперь можно установить `dmd`:
 ```
-~$ sudo snap install dmd --classic
+sudo snap install dmd --classic
 ```
 Для дистрибутива Arch используйте `pacman`:
 ```
-~$ sudo pacman -S dmd
+sudo pacman -S dmd
 ```
 
 ### macOS
@@ -37,8 +37,12 @@ brew install dmd
 
 После установки `dmd` нужно запустить:
 ```
-~$ git clone https://github.com/GassaFM/interpr
-~$ cd interpr/source
-~$ dub build
+git clone https://github.com/GassaFM/interpr
+cd interpr
+dub build
+```
+Или вместо последней строчки:
+```
+~$ dmd -of=interpr source/*.d
 ```
 Теперь у Вас есть исполняемый файл `interpr`.

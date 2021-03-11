@@ -9,7 +9,7 @@ Then follows a section on [syntax](#syntax) with formal definitions.
 After that, it discusses command-line [invocation](#invocation) and options.
 
 Grab a Windows executable, or the source code, in the [releases](https://github.com/GassaFM/interpr/releases) section.
-Alternative guide contributed by students can be found [here](install.md).
+And here is an [installation](install.md) guide contributed by students.
 
 ## Example
 

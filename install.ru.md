@@ -4,7 +4,7 @@
 
 ### Windows
 
-Для Windows есть готовая версия: https://github.com/GassaFM/interpr/releases
+Для Windows есть готовая версия: https://github.com/GassaFM/interpr/releases.
 
 ### Linux
 

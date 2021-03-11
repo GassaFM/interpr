@@ -4,7 +4,7 @@
 
 ### Windows
 
-There is an executable file for Windows available on [https://github.com/GassaFM/interpr/releases].
+There is an executable file for Windows available on https://github.com/GassaFM/interpr/releases.
 
 ### Linux
 

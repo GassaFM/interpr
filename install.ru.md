@@ -43,6 +43,6 @@ dub build
 ```
 Или вместо последней строчки:
 ```
-~$ dmd -of=interpr source/*.d
+dmd -of=interpr source/*.d
 ```
 Теперь у Вас есть исполняемый файл `interpr`.

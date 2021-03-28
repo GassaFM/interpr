@@ -604,7 +604,8 @@ final class StatementParser
 
 	FunctionBlock parse (string [] t0)
 	{
-		t = t0.enumerate (1)
+		t = t0.map !(line => line.findSplitBefore("#")[0])
+			.enumerate (1)
 		    .filter !(line => !line[1].strip.empty)
 		    .map !(line => Line (line))
 		    .array;

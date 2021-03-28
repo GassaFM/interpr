@@ -1,0 +1,18 @@
+function sum (id, pr, n, a):   # first line comment
+	lo := id * n / pr          # lower bound
+	hi := (id + 1) * n / pr    # high bound
+
+	# full line comment
+
+	s := 0
+	for i := lo until hi:
+		s += a[i]
+	send (0, s) # function call
+
+	if id == 0:  # if statement
+		r := 0
+		for k := 0 until pr:  # for statement
+			r += receive (k)
+		print (r)
+
+	b := array (hi - lo)

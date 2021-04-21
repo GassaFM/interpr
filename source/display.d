@@ -73,7 +73,7 @@ void display (Expression e)
 
 void display (Statement s, int indent)
 {
-	writef ("%4d:%-3d %-(%s%)", s.lineId, s.complexity,
+	writef ("%4d:%-3d %-(%s%)", s.lineId, s.complexity+1,
 	    "\t".repeat (indent));
 
 	{
@@ -140,7 +140,7 @@ void display (Statement s, int indent)
 			}
 			if (!cur.statementListFalse.empty)
 			{
-				writef ("    :   %-(%s%)",
+				writef ("%4d:   %-(%s%)", cur.statementListFalse[0].lineId-1,
 				    "\t".repeat (indent));
 				writeln ("else:");
 				foreach (r; cur.statementListFalse)
@@ -154,8 +154,8 @@ void display (Statement s, int indent)
 
 void displayFunction (FunctionBlock p)
 {
-	writefln ("%4d:    function %s (%-(%s, %)):",
-	    p.lineId, p.name, p.parameterList);
+	writefln ("%4d:%-3d function %s (%-(%s, %)):",
+	    p.lineId, p.parameterList.length, p.name, p.parameterList);
 	foreach (s; p.statementList)
 	{
 		display (s, 1);

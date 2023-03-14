@@ -1,0 +1,10 @@
+function elifSupport (id, pr, num, arr):
+	if id < num:
+		print(id, arr[id])
+	elif id < pr / 2:
+		print(id, id)
+	elif id < 3 * pr / 4:
+		tmp := id / 4
+		print(id, 42 + tmp)
+	else:
+		print(id, -1)

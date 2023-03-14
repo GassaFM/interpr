@@ -138,13 +138,37 @@ void display (Statement s, int indent)
 			{
 				display (r, indent + 1);
 			}
-			if (!cur.statementListFalse.empty)
+
+			Statement [] statementListFalse = cur.statementListFalse;
+			while (cur.statementListFalse.length == 1)
+			{
+				auto singleIf = cast (IfBlock) (statementListFalse[0]);
+
+				if (singleIf is null)
+				{
+					break;
+				}
+
+				writef ("%4d:%-3d %-(%s%)", singleIf.lineId,
+					singleIf.complexity+1, "\t".repeat (indent));
+				write ("elif ");
+				display (singleIf.cond);
+				writeln (":");
+				foreach (r; singleIf.statementListTrue)
+				{
+					display (r, indent + 1);
+				}
+
+				statementListFalse = singleIf.statementListFalse;
+			}
+
+			if (!statementListFalse.empty)
 			{
 				writef ("%4d:   %-(%s%)",
-				    cur.statementListFalse[0].lineId - 1,
+				    statementListFalse[0].lineId - 1,
 				    "\t".repeat (indent));
 				writeln ("else:");
-				foreach (r; cur.statementListFalse)
+				foreach (r; statementListFalse)
 				{
 					display (r, indent + 1);
 				}

@@ -438,6 +438,32 @@ final class StatementParser
 		IfBlock res = new IfBlock (line.lineId, cond);
 		res.statementListTrue = parseBlock (prevIndent);
 
+		IfBlock tail = res;
+
+		while (!t.empty)
+		{
+			line = t.front;
+			if (line.indent == prevIndent &&
+			    line.tokens.front == "elif")
+			{
+				t.popFront ();
+				line.tokens.consume ("elif", line);
+				auto elifCond = parseExpression (line);
+				line.tokens.consume (":", line);
+				check (line.tokens.empty, line,
+					"extra token at end of line: " ~ line.tokens.front);
+
+				IfBlock newTail = new IfBlock (line.lineId, elifCond);
+				newTail.statementListTrue = parseBlock (prevIndent);
+
+				tail.statementListFalse = [newTail];
+				tail = newTail;
+			}
+			else {
+				break;
+			}
+		}
+
 		if (!t.empty)
 		{
 			line = t.front;
@@ -447,7 +473,7 @@ final class StatementParser
 				t.popFront ();
 				line.tokens.consume ("else", line);
 				line.tokens.consume (":", line);
-				res.statementListFalse =
+				tail.statementListFalse =
 				    parseBlock (prevIndent);
 			}
 		}

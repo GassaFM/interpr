@@ -89,12 +89,14 @@ final class IfBlock : Statement
 	Expression cond;
 	Statement [] statementListTrue;
 	Statement [] statementListFalse;
+	bool falseBranchIsElif;
 
 	this (int lineId_, Expression cond_)
 	{
 		lineId = lineId_;
 		cond = cond_;
 		complexity = cond.complexity;
+		falseBranchIsElif = false;
 	}
 }
 

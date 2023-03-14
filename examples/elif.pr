@@ -7,4 +7,7 @@ function elifSupport (id, pr, num, arr):
 		tmp := id / 4
 		print(id, 42 + tmp)
 	else:
-		print(id, -1)
+		if id == 99:
+			print(id, -1)
+		else:
+			print(-2)

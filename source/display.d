@@ -139,15 +139,10 @@ void display (Statement s, int indent)
 				display (r, indent + 1);
 			}
 
-			Statement [] statementListFalse = cur.statementListFalse;
-			while (cur.statementListFalse.length == 1)
+			IfBlock curIf = cur;
+			while (curIf.falseBranchIsElif)
 			{
-				auto singleIf = cast (IfBlock) (statementListFalse[0]);
-
-				if (singleIf is null)
-				{
-					break;
-				}
+				auto singleIf = cast (IfBlock) (curIf.statementListFalse[0]);
 
 				writef ("%4d:%-3d %-(%s%)", singleIf.lineId,
 					singleIf.complexity+1, "\t".repeat (indent));
@@ -159,16 +154,16 @@ void display (Statement s, int indent)
 					display (r, indent + 1);
 				}
 
-				statementListFalse = singleIf.statementListFalse;
+				curIf = singleIf;
 			}
 
-			if (!statementListFalse.empty)
+			if (!curIf.statementListFalse.empty)
 			{
 				writef ("%4d:   %-(%s%)",
-				    statementListFalse[0].lineId - 1,
+				    curIf.statementListFalse[0].lineId - 1,
 				    "\t".repeat (indent));
 				writeln ("else:");
-				foreach (r; statementListFalse)
+				foreach (r; curIf.statementListFalse)
 				{
 					display (r, indent + 1);
 				}

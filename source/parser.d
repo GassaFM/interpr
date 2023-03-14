@@ -457,6 +457,7 @@ final class StatementParser
 				newTail.statementListTrue = parseBlock (prevIndent);
 
 				tail.statementListFalse = [newTail];
+				tail.falseBranchIsElif = true;
 				tail = newTail;
 			}
 			else {

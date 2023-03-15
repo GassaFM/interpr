@@ -438,13 +438,22 @@ final class StatementParser
 		IfBlock res = new IfBlock (line.lineId, cond);
 		res.statementListTrue = parseBlock (prevIndent);
 
-		IfBlock tail = res;
+		IfBlock tail = parseChainedElifBlocks(prevIndent, res);
+		parseChainedElseBlock(prevIndent, tail);
+
+		return res;
+	}
+
+	IfBlock parseChainedElifBlocks (string prevIndent, IfBlock head)
+	{
+
+		IfBlock tail = head;
 
 		while (!t.empty)
 		{
-			line = t.front;
+			auto line = t.front;
 			if (line.indent == prevIndent &&
-			    line.tokens.front == "elif")
+				line.tokens.front == "elif")
 			{
 				t.popFront ();
 				line.tokens.consume ("elif", line);
@@ -465,20 +474,25 @@ final class StatementParser
 			}
 		}
 
+		return tail;
+	}
+
+	void parseChainedElseBlock (string prevIndent, IfBlock tail)
+	{
+
 		if (!t.empty)
 		{
-			line = t.front;
+			auto line = t.front;
 			if (line.indent == prevIndent &&
-			    line.tokens.front == "else")
+			line.tokens.front == "else")
 			{
 				t.popFront ();
 				line.tokens.consume ("else", line);
 				line.tokens.consume (":", line);
 				tail.statementListFalse =
-				    parseBlock (prevIndent);
+				parseBlock (prevIndent);
 			}
 		}
-		return res;
 	}
 
 	Statement parseCallStatement (string prevIndent)

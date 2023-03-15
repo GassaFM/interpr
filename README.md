@@ -195,9 +195,19 @@ It calls the function `<name>` with respective arguments.
 * `if <cond>:` is an if block.
 It is followed by one or more statements using the same deeper indentation.
 The statements are executed if the expression `<cond>` evaluates to non-zero.
-They are then optionally followed by an `else:` line, indented the same as `if`,
-and one or more statements using the same deeper indentation again.
-This group of statements is executed if the expression `<cond>` evaluates to zero.
+They are then optionally followed by an `else` or `elif` block indented the same as `if`.
+It is executed if the expression `<cond>` evaluates to zero.
+
+* `elif <cond>:` is an elif block.
+It is like `else:<new line>if <cond>:`,
+but may appear after an `if` or another `elif` block only
+and requires 1 indent increase and 1 line 
+vs. 2 increases and lines for `else if`
+
+* `else:` is else block.
+It may appear after an `if` or `elif` block only.
+It is followed by one or more statements using the same deeper indentation.
+They are executed all previous `if` and `elif` conditions has been evaluated to zero.
 
 * `while <cond>:` is a while block.
 It is followed by one or more statements using the same deeper indentation.

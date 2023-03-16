@@ -71,7 +71,7 @@ void display (Expression e)
 	}
 }
 
-void display (string alternativeToken = null) (Statement s, int indent)
+void display (string ifToken = "if") (Statement s, int indent)
 {
 	writef ("%4d:%-3d %-(%s%)", s.lineId, s.complexity+1,
 	    "\t".repeat (indent));
@@ -131,14 +131,8 @@ void display (string alternativeToken = null) (Statement s, int indent)
 		auto cur = cast (IfBlock) (s);
 		if (cur !is null)
 		{
-			if (alternativeToken is null)
-			{
-				write ("if ");
-			}
-			else {
-				write (alternativeToken);
-				write (" ");
-			}
+			write (ifToken);
+			write (" ");
 
 			display (cur.cond);
 			writeln (":");

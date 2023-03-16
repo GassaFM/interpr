@@ -251,13 +251,9 @@ It calls the function `<name>` with respective arguments.
 Comments are single-line and start with the `#` character. For example:
 
 ```
-function sum (id, pr, n, a):
-    # Only one process will calculate something.
-    if id == 0:
-        s := 0
-        for i := 0 until n:
-            s += a[i]
-        print (s)
+function fun (id, pr, n, a):
+    # Each process prints its id
+    print (id)
 ```
 
 ## Invocation

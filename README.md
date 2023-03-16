@@ -198,8 +198,9 @@ The statements are executed if the expression `<cond>` evaluates to non-zero.
 They are then optionally followed by an `else:` line, indented the same as `if`,
 and one or more statements using the same deeper indentation again.
 This group of statements is executed if the expression `<cond>` evaluates to zero.
-`else:` branch with a single `if <cond>: ...` may be replaced with `elif <cond>: ...`,
-to avoid indent increase ([usage example](examples/elif.pr)).
+A chain like `if <cond1>: ... else: if <cond2>: ...`
+can drop the extra nested indents like this:
+`if <cond1>: ... elif <cond2>: ...`.
 
 * `while <cond>:` is a while block.
 It is followed by one or more statements using the same deeper indentation.

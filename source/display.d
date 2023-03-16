@@ -71,7 +71,7 @@ void display (Expression e)
 	}
 }
 
-void display (Statement s, int indent)
+void display (string alternativeToken = null) (Statement s, int indent)
 {
 	writef ("%4d:%-3d %-(%s%)", s.lineId, s.complexity+1,
 	    "\t".repeat (indent));
@@ -131,51 +131,38 @@ void display (Statement s, int indent)
 		auto cur = cast (IfBlock) (s);
 		if (cur !is null)
 		{
-			write ("if ");
+			if (alternativeToken is null)
+			{
+				write ("if ");
+			}
+			else {
+				write (alternativeToken);
+				write (" ");
+			}
+
 			display (cur.cond);
 			writeln (":");
-			displayStatementList (cur.statementListTrue, indent);
+			foreach (r; cur.statementListTrue)
+			{
+				display (r, indent + 1);
+			}
 
-			IfBlock tailIf = unrollAndDisplayElifBlocks (cur, indent);
-
-			if (!tailIf.statementListFalse.empty)
+			if (cur.falseBranchIsElif)
+			{
+				display !("elif") (cur.statementListFalse[0], indent);
+			}
+			else if (!cur.statementListFalse.empty)
 			{
 				writef ("%4d:   %-(%s%)",
-					tailIf.statementListFalse[0].lineId - 1,
-					"\t".repeat (indent));
+				    cur.statementListFalse[0].lineId - 1,
+				    "\t".repeat (indent));
 				writeln ("else:");
-
-				displayStatementList (tailIf.statementListFalse, indent);
+				foreach (r; cur.statementListFalse)
+				{
+					display (r, indent + 1);
+				}
 			}
 		}
-	}
-}
-
-IfBlock unrollAndDisplayElifBlocks (IfBlock block, int indent)
-{
-	IfBlock curIf = block;
-	while (curIf.falseBranchIsElif)
-	{
-		auto singleIf = cast (IfBlock) (curIf.statementListFalse[0]);
-
-		writef ("%4d:%-3d %-(%s%)", singleIf.lineId,
-			singleIf.complexity+1, "\t".repeat (indent));
-		write ("elif ");
-		display (singleIf.cond);
-		writeln (":");
-		displayStatementList (singleIf.statementListTrue, indent);
-
-		curIf = singleIf;
-	}
-
-	return curIf;
-}
-
-void displayStatementList (Statement[] list, int prevIndent)
-{
-	foreach (r; list)
-	{
-		display (r, prevIndent + 1);
 	}
 }
 

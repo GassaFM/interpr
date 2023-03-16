@@ -199,7 +199,7 @@ They are then optionally followed by an `else:` line, indented the same as `if`,
 and one or more statements using the same deeper indentation again.
 This group of statements is executed if the expression `<cond>` evaluates to zero.
 `else:` branch with a single `if <cond>: ...` may be replaced with `elif <cond>: ...`,
-to avoid indent increase ([usage example](#elif-usage)).
+to avoid indent increase ([usage example](examples/elif.pr)).
 
 * `while <cond>:` is a while block.
 It is followed by one or more statements using the same deeper indentation.
@@ -257,29 +257,6 @@ function sum (id, pr, n, a):
         for i := 0 until n:
             s += a[i]
         print (s)
-```
-
-### `elif` usage
-2 following `if` chains are doing the same thing:
-```
-a := 1
-
-# variant 1
-if a == 1:
-    print(1)
-else:
-    if a == 2:
-        print(2)
-    else:
-        print(3)
-
-# variant 2
-if a == 1:
-    print(1)
-elif a == 2:
-    print(2)
-else:
-    print(3)
 ```
 
 ## Invocation

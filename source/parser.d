@@ -422,7 +422,7 @@ final class StatementParser
 		return res;
 	}
 
-	Statement parseIfOrElifBlock (string token = "if") (string prevIndent)
+	Statement parseIfBlock (string token = "if") (string prevIndent)
 	{
 		auto line = t.front;
 		check (line.indent == prevIndent, line,
@@ -444,7 +444,7 @@ final class StatementParser
 
 			if (line.tokens.front == "elif")
 			{
-				res.statementListFalse = [parseIfOrElifBlock !("elif") (prevIndent)];
+				res.statementListFalse = [parseIfBlock !("elif") (prevIndent)];
 				res.falseBranchIsElif = true;
 			}
 			else if (line.tokens.front == "else")
@@ -527,7 +527,7 @@ final class StatementParser
 		}
 		else if (start == "if")
 		{
-			return parseIfOrElifBlock (prevIndent);
+			return parseIfBlock (prevIndent);
 		}
 		else if (start == "while")
 		{

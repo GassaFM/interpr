@@ -208,7 +208,6 @@ class Runner
 	}
 
 	long evalExpression (Expression e)
-	body
 	{
 		auto cur0 = cast (BinaryOpExpression) (e);
 		if (cur0 !is null) with (cur0)

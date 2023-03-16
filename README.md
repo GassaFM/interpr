@@ -232,7 +232,7 @@ The possible binary operators are, grouped from lower to higher priority:
 Operators with the same priority are processed from left to right.
 The priorities are the same as in C language.
 
-* <unaryOp> <expr> is an unary operator expression.
+* `<unaryOp> <expr>` is an unary operator expression.
 The possible unary operators are `+` (unary plus), `-` (unary minus),
 `!` (logical negation), and `~` (bitwise complement).
 As unary operators are on the left side of their argument, they apply from right to left.

@@ -422,14 +422,14 @@ final class StatementParser
 		return res;
 	}
 
-	Statement parseIfBlock (string prevIndent)
+	Statement parseIfOrElifBlock (string token = "if") (string prevIndent)
 	{
 		auto line = t.front;
 		check (line.indent == prevIndent, line,
 		    "indent does not match");
 		t.popFront ();
 
-		line.tokens.consume ("if", line);
+		line.tokens.consume (token, line);
 		auto cond = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
@@ -438,61 +438,25 @@ final class StatementParser
 		IfBlock res = new IfBlock (line.lineId, cond);
 		res.statementListTrue = parseBlock (prevIndent);
 
-		IfBlock tail = parseChainedElifBlocks(prevIndent, res);
-		parseChainedElseBlock(prevIndent, tail);
-
-		return res;
-	}
-
-	IfBlock parseChainedElifBlocks (string prevIndent, IfBlock head)
-	{
-
-		IfBlock tail = head;
-
-		while (!t.empty)
+		if (!t.empty && t.front.indent == prevIndent)
 		{
-			auto line = t.front;
-			if (line.indent == prevIndent &&
-				line.tokens.front == "elif")
+			line = t.front;
+
+			if (line.tokens.front == "elif")
 			{
-				t.popFront ();
-				line.tokens.consume ("elif", line);
-				auto elifCond = parseExpression (line);
-				line.tokens.consume (":", line);
-				check (line.tokens.empty, line,
-					"extra token at end of line: " ~ line.tokens.front);
-
-				IfBlock newTail = new IfBlock (line.lineId, elifCond);
-				newTail.statementListTrue = parseBlock (prevIndent);
-
-				tail.statementListFalse = [newTail];
-				tail.falseBranchIsElif = true;
-				tail = newTail;
+				res.statementListFalse = [parseIfOrElifBlock !("elif") (prevIndent)];
+				res.falseBranchIsElif = true;
 			}
-			else {
-				break;
-			}
-		}
-
-		return tail;
-	}
-
-	void parseChainedElseBlock (string prevIndent, IfBlock tail)
-	{
-
-		if (!t.empty)
-		{
-			auto line = t.front;
-			if (line.indent == prevIndent &&
-			line.tokens.front == "else")
+			else if (line.tokens.front == "else")
 			{
 				t.popFront ();
 				line.tokens.consume ("else", line);
 				line.tokens.consume (":", line);
-				tail.statementListFalse =
-				parseBlock (prevIndent);
+				res.statementListFalse = parseBlock (prevIndent);
 			}
 		}
+
+		return res;
 	}
 
 	Statement parseCallStatement (string prevIndent)
@@ -563,7 +527,7 @@ final class StatementParser
 		}
 		else if (start == "if")
 		{
-			return parseIfBlock (prevIndent);
+			return parseIfOrElifBlock (prevIndent);
 		}
 		else if (start == "while")
 		{

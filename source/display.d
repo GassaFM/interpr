@@ -71,7 +71,7 @@ void display (Expression e)
 	}
 }
 
-void display (string ifToken = "if") (Statement s, int indent)
+void display (Statement s, int indent)
 {
 	writef ("%4d:%-3d %-(%s%)", s.lineId, s.complexity+1,
 	    "\t".repeat (indent));
@@ -131,8 +131,13 @@ void display (string ifToken = "if") (Statement s, int indent)
 		auto cur = cast (IfBlock) (s);
 		if (cur !is null)
 		{
-			write (ifToken);
-			write (" ");
+			if (cur.isElif)
+			{
+				write ("elif ");
+			}
+			else {
+				write ("if ");
+			}
 
 			display (cur.cond);
 			writeln (":");
@@ -141,19 +146,24 @@ void display (string ifToken = "if") (Statement s, int indent)
 				display (r, indent + 1);
 			}
 
-			if (cur.falseBranchIsElif)
+			if (!cur.statementListFalse.empty)
 			{
-				display !("elif") (cur.statementListFalse[0], indent);
-			}
-			else if (!cur.statementListFalse.empty)
-			{
-				writef ("%4d:   %-(%s%)",
-				    cur.statementListFalse[0].lineId - 1,
-				    "\t".repeat (indent));
-				writeln ("else:");
-				foreach (r; cur.statementListFalse)
+				auto possibleElif = cast (IfBlock) (cur.statementListFalse[0]);
+
+				if (possibleElif !is null && possibleElif.isElif)
 				{
-					display (r, indent + 1);
+					display (possibleElif, indent);
+				}
+				else
+				{
+					writef ("%4d:   %-(%s%)",
+					    cur.statementListFalse[0].lineId - 1,
+					    "\t".repeat (indent));
+					writeln ("else:");
+					foreach (r; cur.statementListFalse)
+					{
+						display (r, indent + 1);
+					}
 				}
 			}
 		}

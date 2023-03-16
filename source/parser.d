@@ -437,6 +437,10 @@ final class StatementParser
 
 		IfBlock res = new IfBlock (line.lineId, cond);
 		res.statementListTrue = parseBlock (prevIndent);
+		if (token == "elif")
+		{
+			res.isElif = true;
+		}
 
 		if (!t.empty && t.front.indent == prevIndent)
 		{
@@ -445,7 +449,6 @@ final class StatementParser
 			if (line.tokens.front == "elif")
 			{
 				res.statementListFalse = [parseIfBlock !("elif") (prevIndent)];
-				res.falseBranchIsElif = true;
 			}
 			else if (line.tokens.front == "else")
 			{

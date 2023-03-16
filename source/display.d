@@ -136,7 +136,7 @@ void display (Statement s, int indent)
 			writeln (":");
 			displayStatementList (cur.statementListTrue, indent);
 
-			IfBlock tailIf = unrollAndDisplayElifBlocks(cur, indent);
+			IfBlock tailIf = unrollAndDisplayElifBlocks (cur, indent);
 
 			if (!tailIf.statementListFalse.empty)
 			{
@@ -151,7 +151,7 @@ void display (Statement s, int indent)
 	}
 }
 
-IfBlock unrollAndDisplayElifBlocks(IfBlock block, int indent)
+IfBlock unrollAndDisplayElifBlocks (IfBlock block, int indent)
 {
 	IfBlock curIf = block;
 	while (curIf.falseBranchIsElif)
@@ -171,7 +171,7 @@ IfBlock unrollAndDisplayElifBlocks(IfBlock block, int indent)
 	return curIf;
 }
 
-void displayStatementList(Statement[] list, int prevIndent)
+void displayStatementList (Statement[] list, int prevIndent)
 {
 	foreach (r; list)
 	{

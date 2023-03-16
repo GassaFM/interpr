@@ -131,22 +131,39 @@ void display (Statement s, int indent)
 		auto cur = cast (IfBlock) (s);
 		if (cur !is null)
 		{
-			write ("if ");
+			if (cur.isElif)
+			{
+				write ("elif ");
+			}
+			else {
+				write ("if ");
+			}
+
 			display (cur.cond);
 			writeln (":");
 			foreach (r; cur.statementListTrue)
 			{
 				display (r, indent + 1);
 			}
+
 			if (!cur.statementListFalse.empty)
 			{
-				writef ("%4d:   %-(%s%)",
-				    cur.statementListFalse[0].lineId - 1,
-				    "\t".repeat (indent));
-				writeln ("else:");
-				foreach (r; cur.statementListFalse)
+				auto possibleElif = cast (IfBlock) (cur.statementListFalse[0]);
+
+				if (possibleElif !is null && possibleElif.isElif)
 				{
-					display (r, indent + 1);
+					display (possibleElif, indent);
+				}
+				else
+				{
+					writef ("%4d:   %-(%s%)",
+					    cur.statementListFalse[0].lineId - 1,
+					    "\t".repeat (indent));
+					writeln ("else:");
+					foreach (r; cur.statementListFalse)
+					{
+						display (r, indent + 1);
+					}
 				}
 			}
 		}

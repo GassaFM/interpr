@@ -422,14 +422,14 @@ final class StatementParser
 		return res;
 	}
 
-	Statement parseIfBlock (string prevIndent)
+	Statement parseIfBlock (string token = "if") (string prevIndent)
 	{
 		auto line = t.front;
 		check (line.indent == prevIndent, line,
 		    "indent does not match");
 		t.popFront ();
 
-		line.tokens.consume ("if", line);
+		line.tokens.consume (token, line);
 		auto cond = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
@@ -437,20 +437,28 @@ final class StatementParser
 
 		IfBlock res = new IfBlock (line.lineId, cond);
 		res.statementListTrue = parseBlock (prevIndent);
+		if (token == "elif")
+		{
+			res.isElif = true;
+		}
 
-		if (!t.empty)
+		if (!t.empty && t.front.indent == prevIndent)
 		{
 			line = t.front;
-			if (line.indent == prevIndent &&
-			    line.tokens.front == "else")
+
+			if (line.tokens.front == "elif")
+			{
+				res.statementListFalse = [parseIfBlock !("elif") (prevIndent)];
+			}
+			else if (line.tokens.front == "else")
 			{
 				t.popFront ();
 				line.tokens.consume ("else", line);
 				line.tokens.consume (":", line);
-				res.statementListFalse =
-				    parseBlock (prevIndent);
+				res.statementListFalse = parseBlock (prevIndent);
 			}
 		}
+
 		return res;
 	}
 

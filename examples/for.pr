@@ -1,0 +1,10 @@
+function for(id, pr, n, a):
+	if id == 0:
+		left := 1
+		right := 3
+		for i := left until right:
+			print(i)
+		for i := left rangeto right:
+			print(i)
+		for i := right downto left:
+			print(i)

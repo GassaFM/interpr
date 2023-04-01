@@ -117,7 +117,7 @@ void display (Statement s, int indent)
 		{
 			write ("for ", cur.name, " := ");
 			display (cur.start);
-			write (" until ");
+			writef (" %s ", forStyleNames[cur.style]);
 			display (cur.finish);
 			writeln (":");
 			foreach (r; cur.statementList)

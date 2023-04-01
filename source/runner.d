@@ -531,6 +531,29 @@ class Runner
 				return true;
 			}
 
+			bool hasNext (long value, long finishValue, ForStyle style) {
+				final switch (style) {
+					case ForStyle.until:
+						return value < finishValue;
+					case ForStyle.rangeto:
+						return value <= finishValue;
+					case ForStyle.downto:
+						return value >= finishValue;
+				}
+			}
+
+			void setValueNext (ref long value, ForStyle style) {
+				final switch (style) {
+					case ForStyle.rangeto:
+					case ForStyle.until:
+						value += 1;
+						break;
+					case ForStyle.downto:
+						value -= 1;
+						break;
+				}
+			}
+
 			auto cur3 = cast (ForBlock) (parent);
 			if (cur3 !is null) with (cur3)
 			{
@@ -544,7 +567,7 @@ class Runner
 					vars[name] = Var (startValue);
 					delay = complexity;
 					delay += 3;
-					if (vars[name].value < finishValue)
+					if (hasNext (vars[name].value, finishValue, style))
 					{
 						pos += 1;
 					}
@@ -557,9 +580,9 @@ class Runner
 				{
 					auto finishValue =
 					    evalExpression (finish);
-					vars[name].value += 1;
+					setValueNext (vars[name].value, style);
 					delay += 7;
-					if (vars[name].value < finishValue)
+					if (hasNext (vars[name].value, finishValue, style))
 					{
 						pos = 0;
 					}

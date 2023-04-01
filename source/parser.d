@@ -411,13 +411,24 @@ final class StatementParser
 		    (line, "bad name: " ~ line.tokens.front);
 		line.tokens.consume (":=", line);
 		auto start = parseExpression (line);
-		line.tokens.consume ("until", line);
+		ForStyle style;
+		auto count = forStyleNames.countUntil (line.tokens.front);
+		if (count < 0) 
+		{
+			check (false, line, '\'' ~ line.tokens.front ~ "\' is not the keyword of the for block");
+		}
+		else 
+		{
+			style = cast (ForStyle) count;
+			line.tokens.consume (forStyleNames[count], line);
+		}
+
 		auto finish = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
-		ForBlock res = new ForBlock (line.lineId, name, start, finish);
+		ForBlock res = new ForBlock (line.lineId, name, style, start, finish);
 		res.statementList = parseBlock (prevIndent);
 		return res;
 	}

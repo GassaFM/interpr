@@ -67,17 +67,28 @@ final class WhileBlock : Statement
 	}
 }
 
+final enum ForStyle
+{
+	until, 
+	rangeto, 
+	downto
+}
+
+immutable string[] forStyleNames = ["until", "rangeto", "downto"];
+
 final class ForBlock : Statement
 {
 	string name;
+	ForStyle style;
 	Expression start;
 	Expression finish;
 	Statement [] statementList;
 
-	this (int lineId_, string name_, Expression start_, Expression finish_)
+	this (int lineId_, string name_, ForStyle style_, Expression start_, Expression finish_)
 	{
 		lineId = lineId_;
 		name = name_;
+		style = style_;
 		start = start_;
 		finish = finish_;
 		complexity = 1 + 1 + start.complexity + finish.complexity;

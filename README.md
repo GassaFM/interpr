@@ -249,7 +249,7 @@ It calls the function `<name>` with respective arguments.
 
 * Variables come as either `<name>` for 64-bit integers or `<name>[<expr>]` for array elements.
 
-* Constants are numbers in decimal notation, composed entirely of decimal digits.
+* Constants are numbers in decimal notation, composed entirely of decimal digits. You can use any number of `_` characters inside the number for easy reading.
 
 ### Comments
 

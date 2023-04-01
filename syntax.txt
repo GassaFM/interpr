@@ -95,7 +95,7 @@ function <name> ( <parameter-list> ) : \n <statement-list>
 ( <expression0> )
 
 <constant> is
-[0-9]+
+[0-9][0-9|_]+
 
 <call> is
 <name> ( <argument-list> )

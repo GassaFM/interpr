@@ -426,7 +426,7 @@ final class StatementParser
 				line.tokens.consume ("rangeto", line);
 				break;
 			default:
-				check (false, line, '\'' ~ line.tokens.front ~ "\' is not the  of the for block");
+				check (false, line, '\'' ~ line.tokens.front ~ "\' is not the keyword of the for block");
 		}
 		auto finish = parseExpression (line);
 		line.tokens.consume (":", line);

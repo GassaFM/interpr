@@ -1,0 +1,6 @@
+function constant(id, pr, n, a):
+    if id == 0:
+        a := 1000
+        b := 1_000____
+        c := 10000___0000
+        print(a, b, c)

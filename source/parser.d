@@ -45,10 +45,13 @@ struct Line
 				{
 					do
 					{
-						temp ~= t.front;
+						if (t.front.isDigit)
+						{
+							temp ~= t.front;
+						}
 						t.popFront ();
 					}
-					while (!t.empty && t.front.isDigit);
+					while (!t.empty && (t.front.isDigit || t.front == '_'));
 				}
 				else if (t.front.isIdent)
 				{

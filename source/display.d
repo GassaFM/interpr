@@ -117,17 +117,7 @@ void display (Statement s, int indent)
 		{
 			write ("for ", cur.name, " := ");
 			display (cur.start);
-			final switch (cur.style) {
-				case ForStyle.until:
-					write (" until ");
-					break;
-				case ForStyle.rangeto:
-					write (" rangeto ");
-					break;
-				case ForStyle.downto:
-					write (" downto ");
-					break;
-			}
+			writef (" %s ", forStyleNames[cur.style]);
 			display (cur.finish);
 			writeln (":");
 			foreach (r; cur.statementList)

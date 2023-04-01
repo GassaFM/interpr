@@ -74,6 +74,8 @@ final enum ForStyle
 	downto
 }
 
+immutable string[] forStyleNames = ["until", "rangeto", "downto"];
+
 final class ForBlock : Statement
 {
 	string name;

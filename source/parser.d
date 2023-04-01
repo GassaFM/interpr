@@ -412,22 +412,17 @@ final class StatementParser
 		line.tokens.consume (":=", line);
 		auto start = parseExpression (line);
 		ForStyle style;
-		switch (line.tokens.front) {
-			case "until":
-				style = ForStyle.until;
-				line.tokens.consume ("until", line);
-				break;
-			case "downto":
-				style = ForStyle.downto;
-				line.tokens.consume ("downto", line);
-				break;
-			case "rangeto":
-				style = ForStyle.rangeto;
-				line.tokens.consume ("rangeto", line);
-				break;
-			default:
-				check (false, line, '\'' ~ line.tokens.front ~ "\' is not the keyword of the for block");
+		auto count = forStyleNames.countUntil (line.tokens.front);
+		if (count < 0) 
+		{
+			check (false, line, '\'' ~ line.tokens.front ~ "\' is not the keyword of the for block");
 		}
+		else 
+		{
+			style = cast (ForStyle) count;
+			line.tokens.consume (forStyleNames[count], line);
+		}
+
 		auto finish = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,

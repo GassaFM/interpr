@@ -109,6 +109,7 @@ while <expression0> : \n <statement-list>
 
 <for-block> is
 for <name> := <expression0> until <expression0> : \n <statement-list>
+for <name> := <expression0> rangeto <expression0> : \n <statement-list>
 for <name> := <expression0> downto <expression0> : \n <statement-list>
 
 <if-block> is

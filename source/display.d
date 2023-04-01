@@ -117,10 +117,16 @@ void display (Statement s, int indent)
 		{
 			write ("for ", cur.name, " := ");
 			display (cur.start);
-			if (cur.isUntil) {
-				write (" until ");
-			} else {
-				write (" downto ");
+			final switch(cur.style) {
+				case ForStyle.until:
+					write (" until ");
+					break;
+				case ForStyle.rangeto:
+					write (" rangeto ");
+					break;
+				case ForStyle.downto:
+					write (" downto ");
+					break;
 			}
 			display (cur.finish);
 			writeln (":");

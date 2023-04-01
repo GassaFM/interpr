@@ -25,7 +25,7 @@
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
             <Keywords name="Keywords1">function array</Keywords>
-            <Keywords name="Keywords2">for until downto while if elif else</Keywords>
+            <Keywords name="Keywords2">for until rangeto downto while if elif else</Keywords>
             <Keywords name="Keywords3">send receive print</Keywords>
             <Keywords name="Keywords4">id</Keywords>
             <Keywords name="Keywords5">pr</Keywords>

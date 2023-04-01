@@ -544,7 +544,19 @@ class Runner
 					vars[name] = Var (startValue);
 					delay = complexity;
 					delay += 3;
-					if ((isUntil && vars[name].value < finishValue) || (!isUntil && vars[name].value >= finishValue))
+					bool hasNext;
+					final switch(style) {
+						case ForStyle.until:
+							hasNext = vars[name].value < finishValue;
+							break;
+						case ForStyle.rangeto:
+							hasNext = vars[name].value <= finishValue;
+							break;
+						case ForStyle.downto:
+							hasNext = vars[name].value >= finishValue;
+							break;
+					}
+					if (hasNext)
 					{
 						pos += 1;
 					}
@@ -557,14 +569,29 @@ class Runner
 				{
 					auto finishValue =
 					    evalExpression (finish);
-					if (isUntil) {
-						vars[name].value += 1;
-					} 
-					else {
-						vars[name].value -= 1;
+					final switch(style) {
+						case ForStyle.rangeto:
+						case ForStyle.until:
+							vars[name].value += 1;
+							break;
+						case ForStyle.downto:
+							vars[name].value -= 1;
+							break;
 					}
 					delay += 7;
-					if ((isUntil && vars[name].value < finishValue) || (!isUntil && vars[name].value >= finishValue))
+					bool hasNext;
+					final switch(style) {
+						case ForStyle.until:
+							hasNext = vars[name].value < finishValue;
+							break;
+						case ForStyle.rangeto:
+							hasNext = vars[name].value <= finishValue;
+							break;
+						case ForStyle.downto:
+							hasNext = vars[name].value >= finishValue;
+							break;
+					}
+					if (hasNext)
 					{
 						pos = 0;
 					}

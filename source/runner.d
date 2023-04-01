@@ -545,7 +545,7 @@ class Runner
 					delay = complexity;
 					delay += 3;
 					bool hasNext;
-					final switch(style) {
+					final switch (style) {
 						case ForStyle.until:
 							hasNext = vars[name].value < finishValue;
 							break;
@@ -569,7 +569,7 @@ class Runner
 				{
 					auto finishValue =
 					    evalExpression (finish);
-					final switch(style) {
+					final switch (style) {
 						case ForStyle.rangeto:
 						case ForStyle.until:
 							vars[name].value += 1;
@@ -580,7 +580,7 @@ class Runner
 					}
 					delay += 7;
 					bool hasNext;
-					final switch(style) {
+					final switch (style) {
 						case ForStyle.until:
 							hasNext = vars[name].value < finishValue;
 							break;

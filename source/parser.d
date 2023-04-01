@@ -412,7 +412,7 @@ final class StatementParser
 		line.tokens.consume (":=", line);
 		auto start = parseExpression (line);
 		ForStyle style;
-		final switch(line.tokens.front) {
+		switch (line.tokens.front) {
 			case "until":
 				style = ForStyle.until;
 				line.tokens.consume ("until", line);
@@ -425,6 +425,8 @@ final class StatementParser
 				style = ForStyle.rangeto;
 				line.tokens.consume ("rangeto", line);
 				break;
+			default:
+				check (false, line, '\'' ~ line.tokens.front ~ "\' is not the  of the for block");
 		}
 		auto finish = parseExpression (line);
 		line.tokens.consume (":", line);

@@ -117,7 +117,7 @@ void display (Statement s, int indent)
 		{
 			write ("for ", cur.name, " := ");
 			display (cur.start);
-			final switch(cur.style) {
+			final switch (cur.style) {
 				case ForStyle.until:
 					write (" until ");
 					break;

@@ -531,7 +531,7 @@ class Runner
 				return true;
 			}
 
-			bool hasNext(long value, long finishValue, ForStyle style) {
+			bool hasNext (long value, long finishValue, ForStyle style) {
 				final switch (style) {
 					case ForStyle.until:
 						return value < finishValue;
@@ -542,7 +542,7 @@ class Runner
 				}
 			}
 
-			void setValueNext(ref long value, ForStyle style) {
+			void setValueNext (ref long value, ForStyle style) {
 				final switch (style) {
 					case ForStyle.rangeto:
 					case ForStyle.until:
@@ -567,7 +567,7 @@ class Runner
 					vars[name] = Var (startValue);
 					delay = complexity;
 					delay += 3;
-					if (hasNext(vars[name].value, finishValue, style))
+					if (hasNext (vars[name].value, finishValue, style))
 					{
 						pos += 1;
 					}
@@ -580,9 +580,9 @@ class Runner
 				{
 					auto finishValue =
 					    evalExpression (finish);
-					setValueNext(vars[name].value, style);
+					setValueNext (vars[name].value, style);
 					delay += 7;
-					if (hasNext(vars[name].value, finishValue, style))
+					if (hasNext (vars[name].value, finishValue, style))
 					{
 						pos = 0;
 					}

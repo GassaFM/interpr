@@ -70,13 +70,15 @@ final class WhileBlock : Statement
 final class ForBlock : Statement
 {
 	string name;
+	bool isUntil;
 	Expression start;
 	Expression finish;
 	Statement [] statementList;
 
-	this (int lineId_, string name_, Expression start_, Expression finish_)
+	this (int lineId_, string name_, bool isUntil_, Expression start_, Expression finish_)
 	{
 		lineId = lineId_;
+		isUntil = isUntil_;
 		name = name_;
 		start = start_;
 		finish = finish_;

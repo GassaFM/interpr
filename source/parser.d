@@ -411,13 +411,18 @@ final class StatementParser
 		    (line, "bad name: " ~ line.tokens.front);
 		line.tokens.consume (":=", line);
 		auto start = parseExpression (line);
-		line.tokens.consume ("until", line);
+		auto isUntil = (line.tokens.front == "until");
+		if (isUntil) {
+			line.tokens.consume ("until", line);
+		} else {
+			line.tokens.consume ("downto", line);
+		}
 		auto finish = parseExpression (line);
 		line.tokens.consume (":", line);
 		check (line.tokens.empty, line,
 		    "extra token at end of line: " ~ line.tokens.front);
 
-		ForBlock res = new ForBlock (line.lineId, name, start, finish);
+		ForBlock res = new ForBlock (line.lineId, name, isUntil, start, finish);
 		res.statementList = parseBlock (prevIndent);
 		return res;
 	}

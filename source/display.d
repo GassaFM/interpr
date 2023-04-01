@@ -117,7 +117,11 @@ void display (Statement s, int indent)
 		{
 			write ("for ", cur.name, " := ");
 			display (cur.start);
-			write (" until ");
+			if (cur.isUntil) {
+				write (" until ");
+			} else {
+				write (" downto ");
+			}
 			display (cur.finish);
 			writeln (":");
 			foreach (r; cur.statementList)

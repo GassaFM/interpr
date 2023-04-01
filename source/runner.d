@@ -544,7 +544,7 @@ class Runner
 					vars[name] = Var (startValue);
 					delay = complexity;
 					delay += 3;
-					if (vars[name].value < finishValue)
+					if ((isUntil && vars[name].value < finishValue) || (!isUntil && vars[name].value >= finishValue))
 					{
 						pos += 1;
 					}
@@ -557,9 +557,14 @@ class Runner
 				{
 					auto finishValue =
 					    evalExpression (finish);
-					vars[name].value += 1;
+					if (isUntil) {
+						vars[name].value += 1;
+					} 
+					else {
+						vars[name].value -= 1;
+					}
 					delay += 7;
-					if (vars[name].value < finishValue)
+					if ((isUntil && vars[name].value < finishValue) || (!isUntil && vars[name].value >= finishValue))
 					{
 						pos = 0;
 					}

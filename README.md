@@ -208,12 +208,14 @@ It is followed by one or more statements using the same deeper indentation.
 As long as the expression `<cond>` evaluates to non-zero,
 the statements are executed from top to bottom, and `<cond>` is evaluated again.
 
-* `for <name> := <start> until <finish>:` is a for block.
+* `for <name> := <start> until/downto <finish>:` is a for block.
 It is followed by one or more statements using the same deeper indentation.
 It first assigns the value of expression `<start>` to variable `<name>`.
-Then, as long as `<name>` is strictly less than the value of expression `<finish>`,
+Then, if the `until` keyword is used, as long as `<name>` is strictly less than the value of expression `<finish>`,
 the statements are executed from top to bottom, the variable is increased by one,
-and the condition is evaluated again.
+and the condition is evaluated again. If the keyword `downto` has been used, as long as `<name>` is not strictly greater than the value of the expression `<finish>`,
+the statements are executed from top to bottom, the value of the variable is decremented by one, 
+after which the condition is checked again.
 
 ### Expressions
 

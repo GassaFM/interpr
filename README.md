@@ -214,10 +214,9 @@ It first assigns the value of expression `<start>` to variable `<name>`.
 Then, as long as `<name>` is strictly less than the value of expression `<finish>`,
 the statements are executed from top to bottom, the variable is increased by one,
 and the condition is evaluated again.
-You can also write `rangeto`/`downto` instead of `until`.
-Then, as long as `<name>` is not strictly less/more respectively, the value of the expression `<finish>`,
-the statements are executed from top to bottom, the variable is increased/decreased, respectively, by one,
-and the condition is evaluated again.
+Instead of `until`, you can also use `rangeto`
+to include the upper bound in the loop, or `downto`
+to make the loop go from `<start>` to `<finish>` inclusive in descending order.
 
 ### Expressions
 

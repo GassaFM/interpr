@@ -1,6 +1,8 @@
-## Installation
+# Installation
 
 (К [русской](install.ru.md) версии)
+
+## Downloading the source
 
 ### Windows
 
@@ -33,7 +35,7 @@ Run:
 brew install dmd
 ```
 
-### Compiling the source
+## Compiling the source
 
 After installing dmd, you should run:
 ```

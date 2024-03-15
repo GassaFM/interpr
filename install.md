@@ -2,11 +2,15 @@
 
 (К [русской](install.ru.md) версии)
 
-## Downloading the source
+For **Windows** there is an executable file available on https://github.com/GassaFM/interpr/releases / Assets / interpr-*X.X*-win32.zip (where *X.X* means last release version).
+
+Anyway it's possible to build executable `interpr.exe` with sources:
+
+## Installing the compiler
 
 ### Windows
 
-There is an executable file for Windows available on https://github.com/GassaFM/interpr/releases.
+Download and install compiler from https://dlang.org/download.html#dmd.
 
 ### Linux
 
@@ -35,7 +39,7 @@ Run:
 brew install dmd
 ```
 
-## Compiling the source
+## Compiling the sources
 
 After installing dmd, you should run:
 ```

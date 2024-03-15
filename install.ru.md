@@ -2,11 +2,15 @@
 
 (Go to [English](install.md) version)
 
-## Скачивание исходников
+Для **Windows** доступен готовый исполняемый файл: https://github.com/GassaFM/interpr/releases / Assets / interpr-*X.X*-win32.zip (где *X.X* обозначает последнюю release-версию).
+
+Также возможно собрать исполняемый `interpr.exe` напрямую из иходного кода:
+
+## Установка компилятора
 
 ### Windows
 
-Для Windows есть готовая версия: https://github.com/GassaFM/interpr/releases.
+Скачайте и установите компилятор из https://dlang.org/download.html#dmd.
 
 ### Linux
 

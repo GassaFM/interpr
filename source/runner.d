@@ -9,6 +9,29 @@ import std.string;
 import language;
 import parser;
 
+struct Queue (T)
+{
+	T [] contents;
+
+	@property bool empty ()
+	{
+		return contents.empty;
+	}
+
+	T pop ()
+	{
+		auto res = contents.front;
+		contents.popFront ();
+		contents.assumeSafeAppend ();
+		return res;
+	}
+
+	void push () (const auto ref T value)
+	{
+		contents ~= value;
+	}
+}
+
 class Runner
 {
 	struct Var
@@ -182,8 +205,11 @@ class Runner
 				    values[0].text ~ " not in [0.." ~
 				    control.num.text ~ ")");
 			}
-			control.queues[id][values[0].to !(size_t)] ~=
-			    values[1..$];
+			foreach (value; values[1..$])
+			{
+				control.queues[id][values[0].to !(size_t)]
+				    .push (value);
+			}
 			return 0;
 		}
 
@@ -199,7 +225,8 @@ class Runner
 
 		if (call.name == "print")
 		{
-			writefln ("%(%s %)", values);
+			writefln !("%(%s %)") (values);
+			stdout.flush ();
 			return 0;
 		}
 
@@ -346,9 +373,9 @@ class Runner
 		}
 
 		auto addr = getAddr (cur.dest, true);
-		doAssign (cur, addr, control.queues[otherId][id].front);
-		control.queues[otherId][id].popFront ();
-		control.queues[otherId][id].assumeSafeAppend ();
+
+		auto value = control.queues[otherId][id].pop ();
+		doAssign (cur, addr, value);
 	}
 
 	void runStatementArray (AssignStatement cur, CallExpression call)
@@ -607,7 +634,7 @@ class Runner
 class RunnerControl
 {
 	Runner [] runners;
-	long [] [] [] queues;
+	Queue !(long) [] [] queues;
 
 	@property int num () const
 	{
@@ -622,7 +649,7 @@ class RunnerControl
 			r = new Runner (this, i.to !(int), p,
 			    i.to !(int), num_, args);
 		}
-		queues = new long [] [] [] (num_, num_);
+		queues = new Queue !(long) [] [] (num_, num_);
 	}
 
 	bool step ()

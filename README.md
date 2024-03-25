@@ -148,6 +148,9 @@ An array element is addressed by array name and element index, as `<name>[<expr>
 Each variable is visible in the block where it was declared, and all nested blocks.
 A name can contain alphanumeric characters and underscores, and can not start with a digit.
 
+It is possible to declare an integer variable and an array variable with the same names.
+Pr syntax guarantees that the type of the variable is explicitly defined at the site of usage.
+
 ### Functions
 
 Each program is a single function declared as:

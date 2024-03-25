@@ -1,11 +1,14 @@
-function simple ():
+function simple (id, pr, n, a):
 	a := 0
 	b := 0
 	c := 0
-	while a < 10:
-		a += 1
-		b += a
-		c += b
-		print (c)
-	print (a)
-	print (b)
+
+	if id == 0:
+		while a < 10:
+			a += 1
+			b += a
+			c += b
+			print (c)
+
+		print (a)
+		print (b)

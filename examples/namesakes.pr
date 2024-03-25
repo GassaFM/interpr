@@ -1,0 +1,11 @@
+function main(id, pr, n, a):
+    if id == 1:
+        x := array(2)
+        x := id
+
+        x[x] := -3 * x
+        x[0] := x + x[x]
+
+        print(x)
+        print(x[0])
+        print(x[1])

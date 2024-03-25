@@ -1,10 +1,12 @@
 function sum (id, pr, n, a):
-	x := array (n)
+	a := array (n)
+	x := 1
 	x += id
 	x -= id
 	x *= id
-	x /= id
-	x %= id
+	if id != 0:
+		x /= id
+		x %= id
 	x ^= id
 	x &= id
 	x |= id
@@ -14,7 +16,8 @@ function sum (id, pr, n, a):
 	x := id >> id >>> id << id
 	x := (((id > pr) & (id < pr) | (id == pr) ^ (id >= pr)))
 	x := (((id <= pr)) & ((id != pr)))
-	x := id + id - id * id / id % pr ^ pr & pr | pr
+	if id != 0:
+		x := id + id - id * id / id % pr ^ pr & pr | pr
 	y := +++id + ++id + +id + id
 	z := ---id - --id - -id - id
 	y := !!!id | !!id ^ !id & id
@@ -31,22 +34,27 @@ function sum (id, pr, n, a):
 	send (id, id)
 	b := array (2)
 	b[1] := receive (id)
-	print (b[0])
+	if id == 39:
+		print (b[0])
+		print ( b[1] )
 	_0123456789abcdefghijklmnopqrstuvwxyz := 0
 	_ABCDEFGHIJKLMNOPQRSTUVWXYZ := 12345678901234568
 
-	x:=array(n)
+	a:=array(n)
+	x:=0
 	x+=id
 	x-=id
 	x*=id
-	x/=id
-	x%=id
+	if id!=0:
+		x/=id
+		x%=id
 	x^=id
 	x&=id
 	x|=id
 	x:=(((id>pr)&(id<pr)|(id==pr)^(id>=pr)))
 	x:=(((id<=pr))&((id!=pr)))
-	x:=id+id-id*id/id%pr^pr&pr|pr
+	if id!=0:
+		x:=id+id-id*id/id%pr^pr&pr|pr
 	y:=+++id+++id++id+id
 	z:=---id---id--id-id
 	y:=!!!id|!!id^!id&id
@@ -63,6 +71,8 @@ function sum (id, pr, n, a):
 	send(id,id)
 	b:=array(2)
 	b[1]:=receive(id)
-	print(b[0])
+	if id==39:
+		print(b[0])
+		print(b[1])
 	_0123456789abcdefghijklmnopqrstuvwxyz:=0
 	_ABCDEFGHIJKLMNOPQRSTUVWXYZ:=12345678901234568

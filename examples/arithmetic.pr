@@ -1,26 +1,27 @@
 function arithmetic (id, pr, num, arr):
-	a := 0
-	b := 0
-	c := 0
-	print (a)
-	while a < 10:
-		a += 1
-		b += a
-		c += b
-		print (c)
-	print (a)
-	print (b)
-	print (-5 >> 1)
-	print (-5 >>> 1)
-	print (-5 << 1)
-	x := -5
-	x >>= 1
-	print (x)
-	x <<= 1
-	print (x)
-	x >>>= 1
-	print (x)
-	x <<= 1
-	print (x)
-	x <<= 1
-	print (x)
+	if id == 0:
+		a := 0
+		b := 0
+		c := 0
+		print (a)
+		while a < 10:
+			a += 1
+			b += a
+			c += b
+			print (c)
+		print (a)
+		print (b)
+		print (-5 >> 1)
+		print (-5 >>> 1)
+		print (-5 << 1)
+		x := -5
+		x >>= 1
+		print (x)
+		x <<= 1
+		print (x)
+		x >>>= 1
+		print (x)
+		x <<= 1
+		print (x)
+		x <<= 1
+		print (x)

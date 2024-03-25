@@ -1,5 +1,5 @@
 function sum (id, pr, n, a):
-	x_array := array (n)
+	a := array (n)
 	x := 1
 	x += id
 	x -= id
@@ -40,7 +40,8 @@ function sum (id, pr, n, a):
 	_0123456789abcdefghijklmnopqrstuvwxyz := 0
 	_ABCDEFGHIJKLMNOPQRSTUVWXYZ := 12345678901234568
 
-	x:=array(n)
+	a:=array(n)
+	x:=0
 	x+=id
 	x-=id
 	x*=id

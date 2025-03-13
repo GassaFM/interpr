@@ -42,6 +42,33 @@ int main (string [] args)
 			pos += 1;
 			steps = args[pos].to !(int);
 		}
+		else if (args[pos] == "-i") 
+		{	
+			pos += 1;
+			try 
+			{
+				auto input = File(args[pos], "r");
+				stdin = input;
+			}
+			catch (Exception e)
+			{
+				stderr.writefln("Cannot find input file \"%s\", using stdin", args[pos]);
+			}
+			
+		}
+		else if (args[pos] == "-o") 
+		{
+			pos += 1;
+			try 
+			{
+				auto output = File(args[pos], "w");
+				stdout = output;
+			}
+			catch (Exception e)
+			{
+				stderr.writefln("Cannot find output file \"%s\", using stdout", args[pos]);
+			}
+		}
 		else
 		{
 			fileName = args[pos];

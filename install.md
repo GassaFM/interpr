@@ -44,11 +44,11 @@ brew install dmd
 After installing dmd, you should run:
 ```
 git clone https://github.com/GassaFM/interpr
-cd interpr/source
-dub build
-```
-Or, instead of the last line:
-```
+cd interpr
 dmd -of=interpr source/*.d
+```
+You also may use `dub` to build an executable:
+```
+dub build
 ```
 Now you have an executable file `interpr`.

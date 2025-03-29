@@ -1,0 +1,140 @@
+module preprocess;
+import language;
+import std.stdio;
+
+int depth;
+void replaceFor(ref Statement[] list, int t)
+{
+    auto f = cast(ForBlock) list[t];
+    if (f.style == ForStyle.until)
+    {
+        Statement[] b = list[0 .. t], e = list[t + 1 .. list.length];
+        auto mod = new BinaryOpExpression(BinaryOpExpression.Type.modulo, new BinaryOpExpression(
+                BinaryOpExpression.Type.subtract, f.finish, f.start), new ConstExpression(
+                depth));
+        auto it = new VarExpression(f.name, null);
+        auto cond1 = new BinaryOpExpression(BinaryOpExpression.Type.less, it, new BinaryOpExpression(
+                BinaryOpExpression.Type.add, f.start, mod));
+        auto cond2 = new BinaryOpExpression(BinaryOpExpression.Type.less, it, f.finish);
+        auto incrIt = new AssignStatement(f.lineId, AssignStatement.Type.assignAdd, it, new ConstExpression(
+                1));
+        auto while1 = new WhileBlock(f.lineId, cond1);
+        while1.statementList = f.statementList;
+        while1.statementList ~= incrIt;
+        auto while2 = new WhileBlock(f.lineId, cond2);
+        for (int i = 0; i < depth; i++)
+        {
+            while2.statementList ~= f.statementList;
+            while2.statementList ~= incrIt;
+        }
+        b ~= new AssignStatement(f.lineId, AssignStatement.Type.assign, it, f.start);
+        b ~= while1;
+        b ~= while2;
+        b ~= e;
+        list = b;
+    }
+    if (f.style == ForStyle.rangeto)
+    {
+        Statement[] b = list[0 .. t], e = list[t + 1 .. list.length];
+        auto mod = new BinaryOpExpression(BinaryOpExpression.Type.modulo, new BinaryOpExpression(
+                BinaryOpExpression.Type.subtract, f.finish, f.start), new ConstExpression(
+                depth));
+        auto it = new VarExpression(f.name, null);
+        auto cond1 = new BinaryOpExpression(BinaryOpExpression.Type.lessEqual, it, new BinaryOpExpression(
+                BinaryOpExpression.Type.add, f.start, mod));
+        auto cond2 = new BinaryOpExpression(BinaryOpExpression.Type.lessEqual, it, f.finish);
+        auto incrIt = new AssignStatement(f.lineId, AssignStatement.Type.assignAdd, it, new ConstExpression(
+                1));
+        auto while1 = new WhileBlock(f.lineId, cond1);
+        while1.statementList = f.statementList;
+        while1.statementList ~= incrIt;
+        auto while2 = new WhileBlock(f.lineId, cond2);
+        for (int i = 0; i < depth; i++)
+        {
+            while2.statementList ~= f.statementList;
+            while2.statementList ~= incrIt;
+        }
+        b ~= new AssignStatement(f.lineId, AssignStatement.Type.assign, it, f.start);
+        b ~= while1;
+        b ~= while2;
+        b ~= e;
+        list = b;
+    }
+    if (f.style == ForStyle.downto)
+    {
+        Statement[] b = list[0 .. t], e = list[t + 1 .. list.length];
+        auto mod = new BinaryOpExpression(BinaryOpExpression.Type.modulo, new BinaryOpExpression(
+                BinaryOpExpression.Type.subtract, f.start, f.finish), new ConstExpression(
+                depth));
+        auto it = new VarExpression(f.name, null);
+        auto cond1 = new BinaryOpExpression(BinaryOpExpression.Type.greaterEqual, it, new BinaryOpExpression(
+                BinaryOpExpression.Type.subtract, f.start, mod));
+        auto cond2 = new BinaryOpExpression(BinaryOpExpression.Type.greaterEqual, it, f.finish);
+        auto incrIt = new AssignStatement(f.lineId, AssignStatement.Type.assignSubtract, it, new ConstExpression(
+                1));
+        auto while1 = new WhileBlock(f.lineId, cond1);
+        while1.statementList = f.statementList;
+        while1.statementList ~= incrIt;
+        auto while2 = new WhileBlock(f.lineId, cond2);
+        for (int i = 0; i < depth; i++)
+        {
+            while2.statementList ~= f.statementList;
+            while2.statementList ~= incrIt;
+        }
+        b ~= new AssignStatement(f.lineId, AssignStatement.Type.assign, it, f.start);
+        b ~= while1;
+        b ~= while2;
+        b ~= e;
+        list = b;
+    }
+}
+
+Statement findFor(Statement now)
+{
+    auto cur0 = cast(FunctionBlock)(now);
+    if (cur0 !is null)
+        with (cur0)
+        {
+            for (int i = 0; i < statementList.length; i++)
+            {
+                findFor(statementList[i]);
+                auto temp = cast(ForBlock) statementList[i];
+                if (temp !is null)
+                {
+                    replaceFor(statementList, i);
+                }
+            }
+            now = cur0;
+        }
+    auto cur1 = cast(ForBlock)(now);
+    if (cur1 !is null)
+        with (cur1)
+        {
+            for (int i = 0; i < statementList.length; i++)
+            {
+                findFor(statementList[i]);
+                auto temp = cast(ForBlock) statementList[i];
+                if (temp !is null)
+                {
+                    replaceFor(statementList, i);
+                }
+            }
+            now = cur1;
+        }
+    auto cur2 = cast(WhileBlock)(now);
+    if (cur2 !is null)
+        with (cur2)
+        {
+            for (int i = 0; i < statementList.length; i++)
+            {
+                findFor(statementList[i]);
+                auto temp = cast(ForBlock) statementList[i];
+                if (temp !is null)
+                {
+                    replaceFor(statementList, i);
+                }
+            }
+            now = cur2;
+        }
+    return now;
+}

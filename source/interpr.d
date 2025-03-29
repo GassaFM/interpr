@@ -10,6 +10,7 @@ import display;
 import language;
 import parser;
 import runner;
+import preprocess;
 
 int main (string [] args)
 {
@@ -51,6 +52,10 @@ int main (string [] args)
 
 	// compile program
 	auto f = File (fileName, "rt");
+	string firstString = strip(f.readln);
+	f.close();
+	f = File (fileName, "rt");
+
 	auto s = new StatementParser ();
 	FunctionBlock p;
 	try
@@ -69,6 +74,11 @@ int main (string [] args)
 	if (compileOnly)
 	{
 		return 0;
+	}
+
+	if(firstString.startsWith("#unroll")){
+		depth = to!int(firstString[8..$]);
+		p = cast(FunctionBlock) findFor(p);
 	}
 
 	// read input

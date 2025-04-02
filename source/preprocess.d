@@ -66,7 +66,7 @@ void apply (ref Statement [] List){
         }
     }
 }
-Statement findFor(Statement now)
+void findFor(Statement now)
 {
     auto cur0 = cast(FunctionBlock)(now);
     if (cur0 !is null)
@@ -97,5 +97,4 @@ Statement findFor(Statement now)
             apply(statementListFalse);
             now = cur3;
         }
-    return now;
 }

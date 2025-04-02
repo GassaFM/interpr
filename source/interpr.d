@@ -69,7 +69,7 @@ int main (string [] args)
 	}
 	if(firstString.startsWith("#unroll")){
 		depth = to!int(firstString[8..$]);
-		p = cast(FunctionBlock) findFor(p);
+		findFor(p);
 	}
 	if (doDisplay)
 	{

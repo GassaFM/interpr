@@ -29,10 +29,12 @@ void replaceFor(ref Statement[] list, int t)
         as = AssignStatement.Type.assignSubtract;
         op = BinaryOpExpression.Type.subtract;
         break;
-    default: break;
+    default:
+        break;
     }
     Statement[] b = list[0 .. t], e = list[t + 1 .. list.length];
-    auto mod = new BinaryOpExpression(BinaryOpExpression.Type.modulo, len, new ConstExpression(depth));
+    auto mod = new BinaryOpExpression(BinaryOpExpression.Type.modulo, len, new ConstExpression(
+            depth));
     auto it = new VarExpression(f.name, null);
     auto cond1 = new BinaryOpExpression(comp, it, new BinaryOpExpression(op, f.start, mod));
     auto cond2 = new BinaryOpExpression(comp, it, f.finish);
@@ -52,52 +54,77 @@ void replaceFor(ref Statement[] list, int t)
     b ~= e;
     list = b;
 }
-    Statement findFor(Statement now)
-    {
-        auto cur0 = cast(FunctionBlock)(now);
-        if (cur0 !is null)
-            with (cur0)
+
+Statement findFor(Statement now)
+{
+    auto cur0 = cast(FunctionBlock)(now);
+    if (cur0 !is null)
+        with (cur0)
+        {
+            for (int i = 0; i < statementList.length; i++)
             {
-                for (int i = 0; i < statementList.length; i++)
+                findFor(statementList[i]);
+                auto temp = cast(ForBlock) statementList[i];
+                if (temp !is null)
                 {
-                    findFor(statementList[i]);
-                    auto temp = cast(ForBlock) statementList[i];
-                    if (temp !is null)
-                    {
-                        replaceFor(statementList, i);
-                    }
+                    replaceFor(statementList, i);
                 }
-                now = cur0;
             }
-        auto cur1 = cast(ForBlock)(now);
-        if (cur1 !is null)
-            with (cur1)
+            now = cur0;
+        }
+    auto cur1 = cast(ForBlock)(now);
+    if (cur1 !is null)
+        with (cur1)
+        {
+            for (int i = 0; i < statementList.length; i++)
             {
-                for (int i = 0; i < statementList.length; i++)
+                findFor(statementList[i]);
+                auto temp = cast(ForBlock) statementList[i];
+                if (temp !is null)
                 {
-                    findFor(statementList[i]);
-                    auto temp = cast(ForBlock) statementList[i];
-                    if (temp !is null)
-                    {
-                        replaceFor(statementList, i);
-                    }
+                    replaceFor(statementList, i);
                 }
-                now = cur1;
             }
-        auto cur2 = cast(WhileBlock)(now);
-        if (cur2 !is null)
-            with (cur2)
+            now = cur1;
+        }
+    auto cur2 = cast(WhileBlock)(now);
+    if (cur2 !is null)
+        with (cur2)
+        {
+            for (int i = 0; i < statementList.length; i++)
             {
-                for (int i = 0; i < statementList.length; i++)
+                findFor(statementList[i]);
+                auto temp = cast(ForBlock) statementList[i];
+                if (temp !is null)
                 {
-                    findFor(statementList[i]);
-                    auto temp = cast(ForBlock) statementList[i];
-                    if (temp !is null)
-                    {
-                        replaceFor(statementList, i);
-                    }
+                    replaceFor(statementList, i);
                 }
-                now = cur2;
             }
-        return now;
-    }
+            now = cur2;
+        }
+    auto cur3 = cast(IfBlock)(now);
+    if (cur3 !is null)
+        with (cur3)
+        {
+            for (int i = 0; i < statementListTrue.length; i++)
+            {
+                findFor(statementListTrue[i]);
+                auto temp = cast(ForBlock) statementListTrue[i];
+                if (temp !is null)
+                {
+                    replaceFor(statementListTrue, i);
+                }
+            }
+            for (int i = 0; i < statementListFalse.length; i++)
+            {
+                findFor(statementListFalse[i]);
+                auto temp = cast(ForBlock) statementListFalse[i];
+                if (temp !is null)
+                {
+                    replaceFor(statementListFalse, i);
+                }
+            }
+            now = cur3;
+        }
+    return now;
+}

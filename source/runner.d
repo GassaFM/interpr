@@ -118,7 +118,7 @@ class Runner
 			{
 				if (cur.vars[name].isConst)
 				{
-					throw new Exception ("array " ~ name ~
+					throw new Exception ("variable " ~ name ~
 					    " is constant");
 				}
 				return &(cur.vars[name].value);

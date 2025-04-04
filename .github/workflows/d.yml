@@ -3,7 +3,6 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 name: D
-mainSourceFile: "source/interpr.d"
 
 on:
   push:

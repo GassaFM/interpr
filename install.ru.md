@@ -45,10 +45,10 @@ brew install dmd
 ```
 git clone https://github.com/GassaFM/interpr
 cd interpr
-dub build
-```
-Или вместо последней строчки:
-```
 dmd -of=interpr source/*.d
+```
+Также можно собрать исполняемый файл при помощи `dub`:
+```
+dub build
 ```
 Теперь у Вас есть исполняемый файл `interpr`.
